@@ -2,13 +2,20 @@ local composer = require( "composer" )
 
 local scene = composer.newScene()
 
+-- These are options for the transition to the class scene
+local classTrans = {
+                    effect = "fade",
+                    time = 400
+                    }
+
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 --event handler for class button
 local function classButtonEvent(event)
-  print("Hello")
+  print("Going to class...")
+  composer.gotoScene("Class", classTrans)
 end
 
 --event handler for library button

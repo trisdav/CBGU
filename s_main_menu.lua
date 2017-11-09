@@ -41,14 +41,14 @@ end
    local b_exit;
    --Button Options
    local bo_exit;
-   local bo_start = { left = xCenter - 50, --center = width/2
-                     top = yCenter - 150,
+   local bo_start = { left = xCenter - 200, --center = width/2
+                     top = yCenter - 450,
                      id = "Start",
                      label = "Start",
                      onEvent = Start,
                      shape = "roundedRect",
-                     width = 100,
-                     height = 40,
+                     width = 400,
+                     height = 160,
                      cornerRadius = 6.28,
                      fillColor = {default = {1,0,0,1}, over = {1,0.1,0.7,0.4}},
                      strokeColor = {default = {1,0.4,0,1}, over = {0.8,0.8,1,1}},
@@ -115,6 +115,7 @@ function scene:show( event )
       -- Called when the scene is still off screen (but is about to come on screen).
       --Initialize buttons.
       b_start    = w_button.newButton(bo_start)
+      b_start._view._label.size = 64
       b_settings = w_button.newButton(bo_settings)
       b_credits  = w_button.newButton(bo_credits)
       b_exit     = w_button.newButton(bo_exit)
