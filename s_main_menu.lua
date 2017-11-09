@@ -49,52 +49,52 @@ end
                      shape = "roundedRect",
                      width = 400,
                      height = 160,
-                     cornerRadius = 6.28,
+                     cornerRadius = 30,
                      fillColor = {default = {1,0,0,1}, over = {1,0.1,0.7,0.4}},
                      strokeColor = {default = {1,0.4,0,1}, over = {0.8,0.8,1,1}},
-                     strokeWidth = 4
+                     strokeWidth = 10
                   }
    local bo_settings = {
-                     left = xCenter - 50, --center = width/2
-                     top = yCenter - 150 + 80, --Offset buttons relative to first button.
+                     left = xCenter - 200, --center = width/2
+                     top = yCenter - 250, --Offset buttons relative to first button.
                      id = "Settings",
                      label = "Settings",
                      onEvent = Settings,
                      shape = "roundedRect",
-                     width = 100,
-                     height = 40,
-                     cornerRadius = 6.28,
+                     width = 400,
+                     height = 160,
+                     cornerRadius = 30,
                      fillColor = {default = {1,0,0,1}, over = {1,0.1,0.7,0.4}},
                      strokeColor = {default = {1,0.4,0,1}, over = {0.8,0.8,1,1}},
-                     strokeWidth = 4
+                     strokeWidth = 10
                   }
    local bo_credits = {
-                     left = xCenter - 50, --center = width/2
-                     top = yCenter - 150 + 160, --Offset buttons relative to first button.
+                     left = xCenter - 200, --center = width/2
+                     top = yCenter - 50, --Offset buttons relative to first button.
                      id = "Credits",
                      label = "Credits",
                      onEvent = Credits,
                      shape = "roundedRect",
-                     width = 100,
-                     height = 40,
-                     cornerRadius = 6.28,
+                     width = 400,
+                     height = 160,
+                     cornerRadius = 30,
                      fillColor = {default = {1,0,0,1}, over = {1,0.1,0.7,0.4}},
                      strokeColor = {default = {1,0.4,0,1}, over = {0.8,0.8,1,1}},
-                     strokeWidth = 4
+                     strokeWidth = 10
                   }
    local bo_exit = {
-                     left = xCenter - 50, --center = width/2
-                     top = yCenter - 150 + 240, --Offset button relative to first button.
+                     left = xCenter - 200, --center = width/2
+                     top = yCenter + 150, --Offset button relative to first button.
                      id = "Exit",
                      label = "Exit",
                      onEvent = quitGame,
                      shape = "roundedRect",
-                     width = 100,
-                     height = 40,
-                     cornerRadius = 6.28,
+                     width = 400,
+                     height = 160,
+                     cornerRadius = 30,
                      fillColor = {default = {1,0,0,1}, over = {1,0.1,0.7,0.4}},
                      strokeColor = {default = {1,0.4,0,1}, over = {0.8,0.8,1,1}},
-                     strokeWidth = 4
+                     strokeWidth = 10
                   }
 ---------------------------------------------------------------------------------
 
@@ -117,8 +117,11 @@ function scene:show( event )
       b_start    = w_button.newButton(bo_start)
       b_start._view._label.size = 64
       b_settings = w_button.newButton(bo_settings)
+      b_settings._view._label.size = 64
       b_credits  = w_button.newButton(bo_credits)
+      b_credits._view._label.size = 64
       b_exit     = w_button.newButton(bo_exit)
+      b_exit._view._label.size = 64
       sceneGroup:insert(b_start)
       sceneGroup:insert(b_settings)
       sceneGroup:insert(b_credits)

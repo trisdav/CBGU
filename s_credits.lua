@@ -28,18 +28,18 @@ end
 
  --Button options
 local bo_menu = {
-               left = xCenter - 50, --center = width/2
-               top = yCenter - 150 + 240,
+               left = xCenter - 200, --center = width/2
+               top = yCenter + 400,
                id = "Menu",
                label = "Menu",
                onEvent = menuFunc,
                shape = "roundedRect",
-               width = 100,
-               height = 40,
-               cornerRadius = 6.28,
+               width = 400,
+               height = 160,
+               cornerRadius = 30,
                fillColor = {default = {1,0,0,1}, over = {1,0.1,0.7,0.4}},
                strokeColor = {default = {1,0.4,0,1}, over = {0.8,0.8,1,1}},
-               strokeWidth = 4
+               strokeWidth = 10
             }
 ---------------------------------------------------------------------------------
  
@@ -51,11 +51,11 @@ function scene:create( event )
    -- Initialize the scene here.
    -- Example: add display objects to "sceneGroup", add touch listeners, etc.
    --display.newText( [parent,] text, x, y [, width, height], font [, fontSize] )
-      local developedText = display.newText("Developed by:", display.contentCenterX + 50, -25, display.contentWidth, display.contentHeight, native.systemFont, 20, "center")
-      local myText = display.newText("Tristan Davis", display.contentCenterX + 50, 0, display.contentWidth, display.contentHeight, native.systemFont, 20, "center") 
-      local zachText = display.newText("Zach Parker", display.contentCenterX + 50, 25, display.contentWidth, display.contentHeight, native.systemFont, 20, "center") 
-      local lostText = display.newText("Brian \"Lost\" Lofty", display.contentCenterX + 50, 50, display.contentWidth, display.contentHeight, native.systemFont, 20, "center") 
-      local brandiText = display.newText("Brandi LeBaron", display.contentCenterX + 50, 75, display.contentWidth, display.contentHeight, native.systemFont, 20, "center") 
+      local developedText = display.newText("Developed by:", display.contentCenterX, display.contentCenterY, display.contentWidth, display.contentHeight, native.systemFont, 64, "center")
+      local myText = display.newText("Tristan Davis", display.contentCenterX, display.contentCenterY + 64, display.contentWidth, display.contentHeight, native.systemFont, 64, "center") 
+      local zachText = display.newText("Zach Parker", display.contentCenterX, display.contentCenterY + (64 * 2), display.contentWidth, display.contentHeight, native.systemFont, 64, "center") 
+      local lostText = display.newText("Brian \"Lost\" Lofty", display.contentCenterX, display.contentCenterY + (64 * 3), display.contentWidth, display.contentHeight, native.systemFont, 64, "center") 
+      local brandiText = display.newText("Brandi LeBaron", display.contentCenterX, display.contentCenterY + (64 * 4), display.contentWidth, display.contentHeight, native.systemFont, 64, "center") 
 
       --myText.align = "center";
       myText:setFillColor(1,1,0)
@@ -63,6 +63,7 @@ function scene:create( event )
       lostText:setFillColor(1,1,0)
       brandiText:setFillColor(1,1,0)
       b_menu = w_button.newButton(bo_menu)
+      b_menu._view._label.size = 64
       sceneGroup:insert(developedText)
       sceneGroup:insert(myText)
       sceneGroup:insert(zachText)
