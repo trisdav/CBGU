@@ -1,12 +1,18 @@
  --b_ = button widget
  --bo_ = button options
  --s_ = a scene file
- -------------------------      Classes     ----------------------------
+ ------------------------------------------------------------------------------------
+ -------------------------      Objects for class.lua    ----------------------------
+ ------------------------------------------------------------------------------------
+ ------------------------------------------------------------------------------------
+
+ ------------------------------------------------------------------------------------
+-- Fidget object
   fidget = {}
  fidget.__index = fidget
 function fidget:new(o)
 		o = o or {} -- create table if if user does not provide one
-		setmetatable(o, self)
+
 		local phsyics = require("physics")
 		local myTimer = nil;
 		physics.setGravity(0,0)
@@ -40,12 +46,13 @@ function fidget:new(o)
 end
 
 
+
+ ------------------------------------------------------------------------------------
+ -------------------------     Here the game is initialized.     ----------------------------
+ ------------------------------------------------------------------------------------
+ ------------------------------------------------------------------------------------
+
 local main = require("composer");
 display.setStatusBar( display.HiddenStatusBar )		
-local function func()
-	function myFunc()
-		print("Hello world")
-	end
-	myFunc()
-end
+
 main.gotoScene("s_main_menu", {effect = "slideRight", time=500})
