@@ -21,7 +21,6 @@ local physics = require("physics")
 -- unless "composer.removeScene()" is called.
 --------------------------------------------------------------------------
 -------
-    function addKeyboard(grp)
     local galphabetSheetOptions = 
         {
             -- Alpha, Beta, Gama, Delta, Epsilon, Zeta, Eta, Theta, Iota, Kappa, Lambda, Mu, Nu,
@@ -198,10 +197,52 @@ local physics = require("physics")
                 }
             }
         }
+local galphabetSheet = graphics.newImageSheet("galphabet.png", galphabetSheetOptions)
+
+local ansKey = {}; -- These are the sprites of the answer keys.
+
+
+--------------- Velocity bar -------------------
+local energyBar;
+local myFidget;
+local function updateVel(event)
+    energyBar:setProgress(myFidget.angularVelocity/5580) --5,600 approx max angular vel
+end
+-------------- Match character functions ----------
+local currKey;
+local boardKeys = {};
+local active = true
+local function genKeys(event)
+    boardKeys[1] = math.random(1,24);
+    boardKeys[2] = math.random(1,24);
+    boardKeys[3] = math.random(1,24);
+    for i = 1, 3, 1 do
+        ansKey[i]:setFrame(boardKeys[i]);
+        ansKey[i].isVisible = true;
+    end
+    currKey = 1;
+
+end
+local function checkKey(event)
+    if(active == true) then
+        if(event.phase == "ended") then
+            print(event.target.id .. " == " .. boardKeys[currKey])
+            if(event.target.id == boardKeys[currKey]) then
+                currKey = currKey + 1;
+                if(currKey > 3) then
+                    currKey = 1;
+                    genKeys();
+                end
+            end
+        end
+    end
+end
+
+
+-------- Create keyboard ---------
+function addKeyboard(grp)
         -- Initialize the image
-        local galphabetSheet = graphics.newImageSheet("galphabet.png", galphabetSheetOptions)
          key = {}
-        local widget = require("widget")
          keyImage = {}
         --Create background for the keys
         local greyRect = display.newRect(360, display.contentHeight - 100, display.contentWidth, 600)
@@ -257,8 +298,12 @@ local physics = require("physics")
             end
             grp:insert(keyImage[keyIndex])
         end
-
+        for i = 1, 24, 1 do
+            key[i]:addEventListener("touch", checkKey);
+        end
 end
+
+
 -- local forward references should go here
 --------------------------------------------------------------------------
 -------
@@ -267,14 +312,54 @@ function scene:create( event )
     local sceneGroup = self.view
     physics.start()
     -- Add fidget spinner
-    local myFidget = fidget:new()
+    myFidget = fidget:new()
     sceneGroup:insert(myFidget)
     -- Add keyboard
     addKeyboard(sceneGroup)
     -- Position fidget spinner
     myFidget.x = display.contentCenterX - 200;
     myFidget.y = display.contentCenterY + 100;
+ 
+    -- Create the time bar.
+    local timeBar = widget.newProgressView(
+        {
+            x = display.contentCenterX,
+            y = 870,
+            width = 800,
+            isAnimated = true
+        }
+    )
+    timeBar:setProgress( 0.5 )
+    -- Create the energy bar.
+    energyBar = widget.newProgressView(
+    {
+        x = 5,
+        y = 400,
+        width = 700,
+        isAnimated = true
+    })
+    energyBar:rotate(270)
+    timer.performWithDelay(500, updateVel, 0)
 
+    -- Initialize answer key
+    -- Initialize white board for ans key
+    local whiteBoard = display.newRect(display.contentCenterX, display.contentCenterY - 300, 400, 200)
+    whiteBoard:setFillColor(1,1,1)
+    sceneGroup:insert(whiteBoard)
+    ansKey[1] = display.newSprite(galphabetSheet, {name = theName, start = 1, count = 24})
+    ansKey[2] = display.newSprite(galphabetSheet, {name = theName, start = 1, count = 24})
+    ansKey[3] = display.newSprite(galphabetSheet, {name = theName, start = 1, count = 24})
+    
+    for i = 1, 3, 1 do
+        ansKey[i].isVisible = false;
+        ansKey[i].x = display.contentCenterX - 270 + (130 * i);
+        ansKey[i].y = display.contentCenterY - 300;
+        sceneGroup:insert(ansKey[i]);
+        ansKey[i]:toFront();
+    end
+    genKeys();
+    sceneGroup:insert(timeBar)
+    sceneGroup:insert(energyBar)
 
 
 -- Initialize the scene here.
