@@ -9,11 +9,13 @@
 --
 -- Created by Tristan Davis on 11/07/17
 -- Last edited by Tristan Davis 11/9/17
+-- Last edited by Tristan Davis 11/10/17
 -----------------------------------------------------------------------------------------
 local composer = require( "composer" )
 local widget = require("widget")
 local scene = composer.newScene()
 local physics = require("physics")
+display.setDefault("background", 1, 1, 1)
 
 --------------------------------------------------------------------------
 -------
@@ -203,20 +205,42 @@ local ansKey = {}; -- These are the sprites of the answer keys.
 
 
 --------------- Velocity bar -------------------
+local numKeys = 5;
 local energyBar;
 local myFidget;
+local tired = {};
+
 local function updateVel(event)
     energyBar:setProgress(myFidget.angularVelocity/5580) --5,600 approx max angular vel
+    if(energyBar:getProgress() > .5) then
+        for i = 1, 3, 1 do
+            tired[i].isVisible = false;
+        end
+    elseif(energyBar:getProgress() < .6 and energyBar:getProgress() > .4) then
+        tired[1].isVisible = true;
+        tired[2].isVisible = false;
+        elseif(energyBar:getProgress() < .4 and energyBar:getProgress() > .2) then
+            tired[1].isVisible = false;
+            tired[2].isVisible = true;
+            tired[3].isVisible = false;
+            elseif(energyBar:getProgress() <  .2) then
+                tired[2].isVisible = false;
+                tired[3].isVisible = true;
+            end
 end
+
+----------- Energy bar stuff ----------
+
 -------------- Match character functions ----------
 local currKey;
 local boardKeys = {};
 local active = true
 local function genKeys(event)
-    boardKeys[1] = math.random(1,24);
-    boardKeys[2] = math.random(1,24);
-    boardKeys[3] = math.random(1,24);
-    for i = 1, 3, 1 do
+    for i = 1, numKeys, 1 do
+        boardKeys[i] = math.random(1,24);
+    end
+
+    for i = 1, numKeys, 1 do
         ansKey[i]:setFrame(boardKeys[i]);
         ansKey[i].isVisible = true;
     end
@@ -229,14 +253,19 @@ local function checkKey(event)
             print(event.target.id .. " == " .. boardKeys[currKey])
             if(event.target.id == boardKeys[currKey]) then
                 currKey = currKey + 1;
-                if(currKey > 3) then
+                if(currKey > numKeys) then
                     currKey = 1;
-                    genKeys();
+                    for i = 1, numKeys, 1 do
+                        ansKey[i].isVisible = false
+                    end
+                    timer.performWithDelay(2000, genKeys);
                 end
             end
         end
     end
 end
+
+
 
 
 -------- Create keyboard ---------
@@ -339,25 +368,44 @@ function scene:create( event )
         isAnimated = true
     })
     energyBar:rotate(270)
-    timer.performWithDelay(500, updateVel, 0)
+    local energyUpdateTimer = timer.performWithDelay(500, updateVel, 0)
 
     -- Initialize answer key
     -- Initialize white board for ans key
     local whiteBoard = display.newRect(display.contentCenterX, display.contentCenterY - 300, 400, 200)
     whiteBoard:setFillColor(1,1,1)
     sceneGroup:insert(whiteBoard)
-    ansKey[1] = display.newSprite(galphabetSheet, {name = theName, start = 1, count = 24})
-    ansKey[2] = display.newSprite(galphabetSheet, {name = theName, start = 1, count = 24})
-    ansKey[3] = display.newSprite(galphabetSheet, {name = theName, start = 1, count = 24})
+    for i = 1, 10, 1 do
+        ansKey[i] = display.newSprite(galphabetSheet, {name = theName, start = 1, count = 24})
+        ansKey[i]:scale(.7,.7)
+    end
     
-    for i = 1, 3, 1 do
+    for i = 1, 5, 1 do
         ansKey[i].isVisible = false;
-        ansKey[i].x = display.contentCenterX - 270 + (130 * i);
-        ansKey[i].y = display.contentCenterY - 300;
+        ansKey[i].x = (130 * i) - 50;
+        ansKey[i].y = 150;
         sceneGroup:insert(ansKey[i]);
         ansKey[i]:toFront();
     end
-    genKeys();
+    for i = 6, 10, 1 do
+        ansKey[i].isVisible = false;
+        ansKey[i].x = 130 + (130 * (i%6)) - 50;
+        ansKey[i].y = 300;
+        sceneGroup:insert(ansKey[i]);
+        ansKey[i]:toFront();
+    end
+    timer.performWithDelay(2000, genKeys)
+    tired[1] = display.newImage("tiredOverlay.png");
+    tired[2] = display.newImage("tiredOverlay2.png");
+    tired[3] = display.newImage("tiredOverlay3.png")
+    for i = 1, 3, 1 do
+        tired[i].x = display.contentCenterX;
+        tired[i].y = display.contentCenterY;
+        sceneGroup:insert(tired[i]);
+        tired[i]:toFront()
+        tired[i].isVisible = false;
+    end
+
     sceneGroup:insert(timeBar)
     sceneGroup:insert(energyBar)
 
