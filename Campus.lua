@@ -40,7 +40,7 @@ end
 
 --event handler for cbg button
 local function cbgButtonEvent(event)
-  print("Hello")
+  composer.gotoScene("CBG", classTrans)
 end
 
 --event handler for dorm button
@@ -110,6 +110,17 @@ function scene:create( event )
     inventoryButton = display.newRect( display.contentCenterX -200, display.contentCenterY +200, 100, 100 )
     inventoryButton:setFillColor(.5,.2,.5)
     inventoryButton:addEventListener("tap", inventoryButtonEvent)
+
+    sceneGroup:insert(inventoryButton);
+    sceneGroup:insert(storeButton);
+    sceneGroup:insert(cafeteriaButton);
+    sceneGroup:insert(dormButton);
+    sceneGroup:insert(cbgButton);
+    sceneGroup:insert(partyButton);
+    sceneGroup:insert(gymButton);
+    sceneGroup:insert(workButton);
+    sceneGroup:insert(libraryButton);
+    sceneGroup:insert(classButton);
 
 end
 
