@@ -5,7 +5,8 @@ local scene = composer.newScene()
 -- These are options for the transition to the class scene
 local classTrans = {
                     effect = "fade",
-                    time = 400
+                    time = 400,
+                    params = {}
                     }
 
 -- -----------------------------------------------------------------------------------

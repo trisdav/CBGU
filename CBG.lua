@@ -21,22 +21,41 @@ local putterLine;
 local speedAmp = 4; -- Used to increase the max/min speed.
 local checkTimer;
 local defaultDamp;
+local narrationText;
+local strokeCount = 1;
+local win = 0;
+local currentLevel;
 
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
 -- -----------------------------------------------------------------------------------
+-- Will set up the next level.
+
+
+
+
 ---- Is moving will check to see if the ball is in motion still. if it is not
 -- it will allow the user to put again.
 local function isMoving(event)
 	local xv,yv = golfObjects.ball:getLinearVelocity();
-
+		xv = math.abs(xv);
+		yv = math.abs(yv);
+		if(win == 0) then
+			narrationText.text = "Current velocity: " .. math.round(xv + yv)
+		end
 	-- If the ball is close to stopping increase damping to prevent 'creeping'
-	if(xv < 5 and yv < 5) then
+	if(xv+yv < 400) then
+		golfObjects.ball.linearDamping = 1;
+		golfObjects.ball.angularDamping = 1;
+
+	elseif(xv + yv < 200) then
+		print("slow down!")
 		golfObjects.ball.linearDamping = 2;
 		golfObjects.ball.angularDamping = 2; 
-	elseif(xv < 1 and yv < 1) then
-		golfObjects.ball.setLinearVelocity(0,0)
-		golfObjects.ball.setAngularVelocity(0)
+	elseif(xv + yv < 50) then
+		print("Stop!!")
+		golfObjects.ball:setLinearVelocity(0,0)
+		golfObjects.ball.angularVelocity = 0
 	end
 
 	-- if ball is no longer in motion.
@@ -48,6 +67,10 @@ local function isMoving(event)
 		putter.x = golfObjects.ball.x;
 		putter.y = golfObjects.ball.y;
 		putter.isVisible = true; -- Return the putter.
+		strokeCount = strokeCount + 1;
+		if( win == 0) then
+			narrationText.text = "Putt!"
+		end
 	end
 
 end
@@ -68,6 +91,7 @@ local function putterEvent(event)
 		end
 		putterLine = display.newLine(golfObjects.ball.x, golfObjects.ball.y, deltaX, deltaY);
 		putterLine.strokeWidth = 8;
+		putterLine:setStrokeColor(0,0,1)
 	end
 	if(event.phase == "ended") then
 		putter.isVisible = false; -- Temporarily remove putter.
@@ -78,7 +102,25 @@ local function putterEvent(event)
 		golfObjects.ball:setLinearVelocity(deltaX * speedAmp, deltaY * speedAmp)
 		putterLine:removeSelf();
 		-- while ball is in motion check to see if it is still in motion
-		checkTimer = timer.performWithDelay(100, isMoving, 0) 
+		checkTimer = timer.performWithDelay(50, isMoving, 0) 
+	end
+end
+
+local function nextLevel()
+
+end
+
+---- Will handle the times the player manages to land the ball in the hole.
+local function inTheHole(event)
+
+	if(event.other == golfObjects.ball) then
+		golfObjects.ball:setLinearVelocity(0,0);
+		golfObjects.ball.angularVelocity = 0;
+		transition.to(event.other, {time = 150, x = golfObjects.hole.x, y = golfObjects.hole.y})
+		narrationText.text = "Hole in: ".. strokeCount;
+		win = 1;
+		--print("Here")
+		timer.performWithDelay(2000, nextLevel)
 	end
 end
 
@@ -88,7 +130,10 @@ function scene:create( event )
     -- Create the golf course.
     -- Create the flicker doodle thingy
 	putter:toBack();
-    golfObjects.getLevel(1, "hybrid");
+	currentLevel = (event.params.golfLevel or 1)
+    golfObjects.getLevel(currentLevel);
+    narrationText =  display.newText( "Putt!", 340, 100, native.systemFont, 64 )
+	narrationText:setFillColor( 1, 0, 0.5 )
 
 
     sceneGroup:insert(golfObjects.background)
@@ -98,8 +143,17 @@ function scene:create( event )
 	putter.y = golfObjects.ball.y;
 	defaultDamp = golfObjects.ball.linearDamping;
 	putter:addEventListener("touch", putterEvent);
-
-
+	golfObjects.hole:toFront();
+	local holeSensor = display.newCircle(golfObjects.hole.x, golfObjects.hole.y, 15)
+	holeSensor:toBack();
+	physics.addBody(holeSensor, "kinematic", {isSensor = true, radius = 10})
+	holeSensor:addEventListener("collision", inTheHole);
+	sceneGroup:insert(holeSensor);
+	holeSensor:toBack();
+	sceneGroup:insert(narrationText);
+	sceneGroup:insert(golfObjects.ball);
+	sceneGroup:insert(putter);
+	putter:toBack();
     --sceneGroup:insert(golfObjects.walls)
     -- Code here runs when the scene is first created but has not yet appeared on screen
 
@@ -142,6 +196,7 @@ end
 function scene:destroy( event )
 
     local sceneGroup = self.view
+    sceneGroup:removeSelf();
     -- Code here runs prior to the removal of scene's view
 
 end
