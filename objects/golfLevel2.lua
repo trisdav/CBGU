@@ -30,6 +30,25 @@ local ball;
 local hole;
 local background;
 
+-------------- Transition between courses -----------------
+local transition = {
+                    effect = "fade",
+                    time = 400,
+                    params = { golfLevel  = 1 }
+                    }
+
+local function nextLevel()
+	transition.params.golfLevel = transition.params.golfLevel + 1;
+	if(transition.params.golfLevel > 2) then
+		composer.gotoScene("objects.golfLevel1");
+	elseif(transition.params.golfLevel == 2) then
+		composer.gotoScene("objects.golfLevel2");
+	elseif(transition.params.golfLevel == 1) then
+		composer.gotoScene("objects.golfLevel1");
+	else
+		print("Thats odd, that level does not seem to exist.")
+	end
+end
 
 
 ------------- golf ball stuff ----------------
@@ -207,8 +226,7 @@ function scene:create( event )
 	local holeGumbo = display.newImageRect( "hole.png", 49, 49 )
 	holeGumbo.x = 99
 	holeGumbo.y = 199
-	physics.addBody( holeGumbo, "kinematic", { density=1, friction=0.3, bounce=0.2 } )
-
+	
 	local Sand = display.newImageRect( "Sand.png", 307, 367 )
 	Sand.x = 183
 	Sand.y = 495

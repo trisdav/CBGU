@@ -30,7 +30,25 @@ local ball;
 local hole;
 local background;
 
+-------------- Transition between courses -----------------
+local transition = {
+                    effect = "fade",
+                    time = 400,
+                    params = { golfLevel  = 1 }
+                    }
 
+local function nextLevel()
+	transition.params.golfLevel = transition.params.golfLevel + 1;
+	if(transition.params.golfLevel > 2) then
+		composer.gotoScene("objects.golfLevel1");
+	elseif(transition.params.golfLevel == 2) then
+		composer.gotoScene("objects.golfLevel2");
+	elseif(transition.params.golfLevel == 1) then
+		composer.gotoScene("objects.golfLevel1");
+	else
+		print("Thats odd, that level does not seem to exist.")
+	end
+end
 
 ------------- golf ball stuff ----------------
 
@@ -205,8 +223,7 @@ function scene:create( event )
 
     narrationText =  display.newText( "Putt!", 340, 100, native.systemFont, 64 )
 	narrationText:setFillColor( 1, 0, 0.5 )
-
-
+	
     sceneGroup:insert(background)
     sceneGroup:insert(hole)
 	background:toFront();
@@ -229,6 +246,7 @@ function scene:create( event )
 	sceneGroup:insert(ball);
 	sceneGroup:insert(putter);
 	putter:toBack();
+	-- Set up the level
     -- Code here runs when the scene is first created but has not yet appeared on screen
 
 end
