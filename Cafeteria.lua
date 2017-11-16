@@ -1,4 +1,5 @@
 local composer = require( "composer" )
+local physics = require("physics")
 
 local scene = composer.newScene()
 
@@ -7,6 +8,43 @@ local scene = composer.newScene()
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
 
+local objects = {}; -- A list of objects.
+local points; -- A sum of possitive and negative objects.
+
+local function createObject()
+	local o = math.random(1, 10); -- Object
+	local theObject;
+	if(o == 1) then
+	elseif(o == 2) then
+	elseif(o == 3) then
+	elseif(o == 4) then
+	elseif(o == 5) then
+	elseif(o == 6) then
+	elseif(o == 7) then
+	elseif(o == 8) then
+	elseif(o == 9) then
+	elseif(o == 10) then
+	else
+	end
+	return theObject;
+end
+
+local function positiveObject(event)
+	points = points + 1;
+end
+
+local function negativeObject(event)
+	points = points - 1;
+end
+
+local function gameOver(event)
+	-- Game over things.
+end
+
+local function startGame()
+	timer.performWithDelay((1000 * 60) * 2, gameOver); -- This game is timed.
+	--timer.performWithDelay((100 * math.random(1,20), )
+end
 
 
 
@@ -18,6 +56,7 @@ local scene = composer.newScene()
 function scene:create( event )
 
     local sceneGroup = self.view
+
     -- Code here runs when the scene is first created but has not yet appeared on screen
 
 end
