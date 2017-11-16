@@ -10,12 +10,14 @@
 -- Created by Tristan Davis on 11/07/17
 -- Last edited by Tristan Davis 11/9/17
 -- Last edited by Tristan Davis 11/10/17
+--	Last edited 11-16-17
 -----------------------------------------------------------------------------------------
 local composer = require( "composer" )
 local widget = require("widget")
 local scene = composer.newScene()
 local physics = require("physics")
 display.setDefault("background", 1, 1, 1)
+--	composer.removeScene("Class")
 
 --------------------------------------------------------------------------
 -------
@@ -348,6 +350,7 @@ function scene:create( event )
     -- Position fidget spinner
     myFidget.x = display.contentCenterX - 200;
     myFidget.y = display.contentCenterY + 100;
+	myFidget.angularVelocity = 5500
  
     -- Create the time bar.
     local timeBar = widget.newProgressView(
@@ -441,6 +444,7 @@ end
 -- "scene:destroy()"
 function scene:destroy( event )
     local sceneGroup = self.view
+	display.remove(myFidget);
     -- Called prior to the removal of scene's view ("sceneGroup").
     -- Insert code here to clean up the scene.
     -- Example: remove display objects, save state, etc.

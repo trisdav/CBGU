@@ -4,6 +4,7 @@
 
 	This file will hold all the level data for the various golf levels to be implemented
 	in the cat berry greens.
+	Last edited 11-16-17
 
 ]]
 
@@ -16,8 +17,10 @@ local scene = composer.newScene()
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
-
 local putter = display.newCircle(0,0,600); -- used for putting
+putter:setFillColor(0,0,0, .05)
+putter:setStrokeColor(1,0,0, .5)
+putter.strokeWidth = 2
 local putterLine;
 local speedAmp = 4; -- Used to increase the max/min speed.
 local checkTimer;
@@ -25,11 +28,15 @@ local defaultDamp;
 local narrationText;
 local strokeCount = 1;
 local win = 0;
+local sandDamp = 0;
 local currentLevel;
+
+-- Add any physics bodies here, it is necessary for removal of the scene.
 local ball;
 local hole;
-local holeSensor
+local holeSensor;
 local background;
+local Sand;
 
 -------------- Transition between courses -----------------
 local transOpt = {
@@ -40,8 +47,9 @@ local transOpt = {
 
 local function nextLevel()
 	transOpt.params.golfLevel = transOpt.params.golfLevel + 1;
-	-- Remove scene objects
+	--Remove scene objects
 	composer.removeScene("objects.golfLevel1")
+
 	if(transOpt.params.golfLevel > 2) then
 		composer.gotoScene("objects.golfLevel1");
 	elseif(transOpt.params.golfLevel == 2) then
@@ -75,13 +83,13 @@ local function isMoving(event)
 		end
 	-- If the ball is close to stopping increase damping to prevent 'creeping'
 	if(xv+yv < 400) then
-		ball.linearDamping = 1;
-		ball.angularDamping = 1;
+		ball.linearDamping = 1 + sandDamp;
+		ball.angularDamping = 1 + sandDamp;
 
 	elseif(xv + yv < 200) then
 		print("slow down!")
-		ball.linearDamping = 2;
-		ball.angularDamping = 2; 
+		ball.linearDamping = 2 + sandDamp;
+		ball.angularDamping = 2 + sandDamp; 
 	elseif(xv + yv < 50) then
 		print("Stop!!")
 		ball:setLinearVelocity(0,0)
@@ -90,8 +98,8 @@ local function isMoving(event)
 
 	-- if ball is no longer in motion.
 	if(xv == 0 and yv == 0) then
-		ball.linearDamping = defaultDamp;
-		ball.angularDamping = defaultDamp;
+		ball.linearDamping = defaultDamp + sandDamp;
+		ball.angularDamping = defaultDamp + sandDamp;
 		timer.cancel(checkTimer); -- Stop checking to see if ball is in motion.
 		-- Set the putter to the new ball positon
 		putter.x = ball.x;
@@ -130,7 +138,7 @@ local function putterEvent(event)
 		local deltaY = event.y - ball.y;
 		-- set ball velocity
 		ball:setLinearVelocity(deltaX * speedAmp, deltaY * speedAmp)
-		putterLine:removeSelf();
+		display.remove(putterLine)
 		-- while ball is in motion check to see if it is still in motion
 		checkTimer = timer.performWithDelay(50, isMoving, 0) 
 	end
@@ -149,6 +157,23 @@ local function inTheHole(event)
 		timer.performWithDelay(2000, nextLevel)
 	end
 end
+---------------- Sand event --------------------
+local function sandPit(event)
+	if(event.phase == "began") then
+		--in the pit.
+		sandDamp = 20;
+		ball.linearDamping = sandDamp;
+		ball.angularDamping = sandDamp;
+	elseif(event.phase == "ended") then
+		-- Out of the pit.
+		ball.linearDamping = defaultDamp;
+		ball.angularDamping = defaultDamp;
+		sandDamp = 0;
+	end
+
+end
+
+
 
 -- create()
 function scene:create( event )
@@ -160,7 +185,7 @@ function scene:create( event )
 -------------------------------------------------------------------------
 	local physics = require( "physics" )
 	physics.start()
-	physics.setDrawMode( "hybrid" )
+	--physics.setDrawMode( "hybrid" )
 	--physics.setDrawMode( "debug" )
 
 	---------------------------
@@ -249,7 +274,7 @@ function scene:create( event )
 	sceneGroup:insert(narrationText);
 	sceneGroup:insert(ball);
 	sceneGroup:insert(putter);
-	putter:toBack();
+	--putter:toBack();
 	-- Set up the level
     -- Code here runs when the scene is first created but has not yet appeared on screen
 
