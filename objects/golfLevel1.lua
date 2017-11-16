@@ -28,22 +28,25 @@ local win = 0;
 local currentLevel;
 local ball;
 local hole;
+local holeSensor
 local background;
 
 -------------- Transition between courses -----------------
-local transition = {
+local transOpt = {
                     effect = "fade",
-                    time = 400,
+                   	time = 400,
                     params = { golfLevel  = 1 }
                     }
 
 local function nextLevel()
-	transition.params.golfLevel = transition.params.golfLevel + 1;
-	if(transition.params.golfLevel > 2) then
+	transOpt.params.golfLevel = transOpt.params.golfLevel + 1;
+	-- Remove scene objects
+	composer.removeScene("objects.golfLevel1")
+	if(transOpt.params.golfLevel > 2) then
 		composer.gotoScene("objects.golfLevel1");
-	elseif(transition.params.golfLevel == 2) then
+	elseif(transOpt.params.golfLevel == 2) then
 		composer.gotoScene("objects.golfLevel2");
-	elseif(transition.params.golfLevel == 1) then
+	elseif(transOpt.params.golfLevel == 1) then
 		composer.gotoScene("objects.golfLevel1");
 	else
 		print("Thats odd, that level does not seem to exist.")
@@ -107,8 +110,8 @@ end
 local function putterEvent(event)
 	if(event.phase == "moved") then
 		-- Get change in x and y
-		local deltaX = event.xStart + event.x;
-		local deltaY = event.yStart + event.y;
+		local deltaX = ball.x + event.x;
+		local deltaY = ball.y + event.y;
 		-- Normalize positions
 		deltaX = deltaX - ball.x;
 		deltaY = deltaY - ball.y;
@@ -123,8 +126,8 @@ local function putterEvent(event)
 	if(event.phase == "ended") then
 		putter.isVisible = false; -- Temporarily remove putter.
 		-- Get change in x and y
-		local deltaX = event.x - event.xStart;
-		local deltaY = event.y - event.yStart;
+		local deltaX = event.x - ball.x;
+		local deltaY = event.y - ball.y;
 		-- set ball velocity
 		ball:setLinearVelocity(deltaX * speedAmp, deltaY * speedAmp)
 		putterLine:removeSelf();
@@ -157,7 +160,7 @@ function scene:create( event )
 -------------------------------------------------------------------------
 	local physics = require( "physics" )
 	physics.start()
-	--physics.setDrawMode( "hybrid" )
+	physics.setDrawMode( "hybrid" )
 	--physics.setDrawMode( "debug" )
 
 	---------------------------
@@ -218,6 +221,7 @@ function scene:create( event )
 
 	background = mainBG; -- For sake of the generated code.
 	hole = holeGumbo;
+
 	setBall(360,1200); -- Set the position of the ball.
 	physics.setGravity(0,0)
 
@@ -228,7 +232,7 @@ function scene:create( event )
     sceneGroup:insert(hole)
 	background:toFront();
 	-- Create sensor for detectin when user has landed a hole.
-	local holeSensor = display.newCircle(hole.x, hole.y, 15)
+	holeSensor = display.newCircle(hole.x, hole.y, 15)
 	physics.addBody(holeSensor, "kinematic", {isSensor = true, radius = 10})
 	holeSensor:addEventListener("collision", inTheHole);
 	
@@ -288,8 +292,12 @@ end
 function scene:destroy( event )
 
     local sceneGroup = self.view
-    sceneGroup:removeSelf();
-    -- Code here runs prior to the removal of scene's view
+    -- Remove any scene bodies
+    sceneGroup:remove(background)
+    sceneGroup:remove(ball)
+    sceneGroup:remove(hole)
+    sceneGroup:remove(holeSensor)
+   -- Code here runs prior to the removal of scene's view
 
 end
 

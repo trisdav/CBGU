@@ -25,31 +25,38 @@ local defaultDamp;
 local narrationText;
 local strokeCount = 1;
 local win = 0;
+local sandDamp = 0;
 local currentLevel;
+
+-- Add any physics bodies here, it is necessary for removal of the scene.
 local ball;
 local hole;
+local holeSensor;
 local background;
+local Sand;
 
 -------------- Transition between courses -----------------
-local transition = {
+local transOpt = {
                     effect = "fade",
-                    time = 400,
+                   	time = 400,
                     params = { golfLevel  = 1 }
                     }
 
 local function nextLevel()
-	transition.params.golfLevel = transition.params.golfLevel + 1;
-	if(transition.params.golfLevel > 2) then
+	transOpt.params.golfLevel = transOpt.params.golfLevel + 1;
+	--Remove scene objects
+	composer.removeScene("objects.golfLevel2")
+
+	if(transOpt.params.golfLevel > 2) then
 		composer.gotoScene("objects.golfLevel1");
-	elseif(transition.params.golfLevel == 2) then
+	elseif(transOpt.params.golfLevel == 2) then
 		composer.gotoScene("objects.golfLevel2");
-	elseif(transition.params.golfLevel == 1) then
+	elseif(transOpt.params.golfLevel == 1) then
 		composer.gotoScene("objects.golfLevel1");
 	else
 		print("Thats odd, that level does not seem to exist.")
 	end
 end
-
 
 ------------- golf ball stuff ----------------
 
@@ -73,13 +80,13 @@ local function isMoving(event)
 		end
 	-- If the ball is close to stopping increase damping to prevent 'creeping'
 	if(xv+yv < 400) then
-		ball.linearDamping = 1;
-		ball.angularDamping = 1;
+		ball.linearDamping = 1 + sandDamp;
+		ball.angularDamping = 1 + sandDamp;
 
 	elseif(xv + yv < 200) then
 		print("slow down!")
-		ball.linearDamping = 2;
-		ball.angularDamping = 2; 
+		ball.linearDamping = 2 + sandDamp;
+		ball.angularDamping = 2 + sandDamp; 
 	elseif(xv + yv < 50) then
 		print("Stop!!")
 		ball:setLinearVelocity(0,0)
@@ -88,8 +95,8 @@ local function isMoving(event)
 
 	-- if ball is no longer in motion.
 	if(xv == 0 and yv == 0) then
-		ball.linearDamping = defaultDamp;
-		ball.angularDamping = defaultDamp;
+		ball.linearDamping = defaultDamp + sandDamp;
+		ball.angularDamping = defaultDamp + sandDamp;
 		timer.cancel(checkTimer); -- Stop checking to see if ball is in motion.
 		-- Set the putter to the new ball positon
 		putter.x = ball.x;
@@ -108,8 +115,8 @@ end
 local function putterEvent(event)
 	if(event.phase == "moved") then
 		-- Get change in x and y
-		local deltaX = event.xStart + event.x;
-		local deltaY = event.yStart + event.y;
+		local deltaX = ball.x + event.x;
+		local deltaY = ball.y + event.y;
 		-- Normalize positions
 		deltaX = deltaX - ball.x;
 		deltaY = deltaY - ball.y;
@@ -124,11 +131,11 @@ local function putterEvent(event)
 	if(event.phase == "ended") then
 		putter.isVisible = false; -- Temporarily remove putter.
 		-- Get change in x and y
-		local deltaX = event.x - event.xStart;
-		local deltaY = event.y - event.yStart;
+		local deltaX = event.x - ball.x;
+		local deltaY = event.y - ball.y;
 		-- set ball velocity
 		ball:setLinearVelocity(deltaX * speedAmp, deltaY * speedAmp)
-		putterLine:removeSelf();
+		display.remove(putterLine)
 		-- while ball is in motion check to see if it is still in motion
 		checkTimer = timer.performWithDelay(50, isMoving, 0) 
 	end
@@ -147,6 +154,25 @@ local function inTheHole(event)
 		timer.performWithDelay(2000, nextLevel)
 	end
 end
+---------------- Sand event --------------------
+local function sandPit(event)
+	if(event.phase == "began") then
+		--in the pit.
+		sandDamp = 20;
+		ball.linearDamping = sandDamp;
+		ball.angularDamping = sandDamp;
+	elseif(event.phase == "ended") then
+		-- Out of the pit.
+		ball.linearDamping = defaultDamp;
+		ball.angularDamping = defaultDamp;
+		sandDamp = 0;
+	end
+	print("Phase: " .. event.phase)
+	print("is touching")
+		print(event.contact.isTouching)
+end
+
+
 
 -- create()
 function scene:create( event )
@@ -227,12 +253,20 @@ function scene:create( event )
 	holeGumbo.x = 99
 	holeGumbo.y = 199
 	
-	local Sand = display.newImageRect( "Sand.png", 307, 367 )
+	 Sand = display.newImageRect( "Sand.png", 307, 367 )
 	Sand.x = 183
 	Sand.y = 495
 -------------------------------------------------------------------------
 ----------------  End of Gumbo - generated code       -------------------
 -------------------------------------------------------------------------
+	physics.addBody(Sand, "dynamic", -- I forgot to tell gumbo to do this.
+					{density=Topsand.density, friction=Topsand.friction, bounce=Topsand.bounce, shape=Topsand},
+					{density=Topsand.density, friction=Topsand.friction, bounce=Topsand.bounce, shape=roghtbottomsand},
+					{density=Topsand.density, friction=Topsand.friction, bounce=Topsand.bounce, shape=leftbottomsand})
+	Sand.isSensor = true; -- Sensor, objects shouldn't bounce off of this...
+
+	Sand:addEventListener("collision", sandPit);
+
 
 	background = mainBG; -- For sake of the generated code.
 	hole = holeGumbo;
@@ -247,7 +281,7 @@ function scene:create( event )
     sceneGroup:insert(hole)
 	background:toFront();
 	-- Create sensor for detectin when user has landed a hole.
-	local holeSensor = display.newCircle(hole.x, hole.y, 15)
+	holeSensor = display.newCircle(hole.x, hole.y, 15)
 	physics.addBody(holeSensor, "kinematic", {isSensor = true, radius = 10})
 	holeSensor:addEventListener("collision", inTheHole);
 	
@@ -308,7 +342,10 @@ end
 function scene:destroy( event )
 
     local sceneGroup = self.view
-    sceneGroup:removeSelf();
+    sceneGroup:remove(background)
+    sceneGroup:remove(ball);
+    sceneGroup:remove(holeSensor)
+    sceneGroup:remove(Sand)
     -- Code here runs prior to the removal of scene's view
 
 end
