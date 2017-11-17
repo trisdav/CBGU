@@ -21,7 +21,7 @@ function fidget:new(o)
 		}
 		local myText = display.newText("angular velcity", 350, 25, native.systemFont, 64)
 		local currentOmega = 0;
-		local myImage = display.newImage("educational_instrument.png" )
+		local myImage = display.newImage("arts/educational_instrument.png" )
 		myImage.x = display.contentCenterX
 		myImage.y = display.contentCenterY
 		
@@ -36,7 +36,7 @@ function fidget:new(o)
 			end
 		end
 
-		local imageOutline = graphics.newOutline(2, "educational_instrument.png")
+		local imageOutline = graphics.newOutline(2, "arts/educational_instrument.png")
 
 		 physics.addBody(myImage, "dynamic", {isSensor = true})
 		 myImage.angularDamping = .2

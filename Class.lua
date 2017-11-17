@@ -201,7 +201,7 @@ display.setDefault("background", 1, 1, 1)
                 }
             }
         }
-local galphabetSheet = graphics.newImageSheet("galphabet.png", galphabetSheetOptions)
+local galphabetSheet = graphics.newImageSheet("arts/galphabet.png", galphabetSheetOptions)
 
 local ansKey = {}; -- These are the sprites of the answer keys.
 
@@ -398,9 +398,9 @@ function scene:create( event )
         ansKey[i]:toFront();
     end
     timer.performWithDelay(2000, genKeys)
-    tired[1] = display.newImage("tiredOverlay.png");
-    tired[2] = display.newImage("tiredOverlay2.png");
-    tired[3] = display.newImage("tiredOverlay3.png")
+    tired[1] = display.newImage("arts/tiredOverlay.png");
+    tired[2] = display.newImage("arts/tiredOverlay2.png");
+    tired[3] = display.newImage("arts/tiredOverlay3.png")
     for i = 1, 3, 1 do
         tired[i].x = display.contentCenterX;
         tired[i].y = display.contentCenterY;

@@ -220,7 +220,7 @@ function scene:create( event )
 	Bottom.density = 1; Bottom.friction = 0.3; Bottom.bounce = 0.2; 
 
 
-	local mainBG = display.newImageRect( "golf-l3.png", 720, 1280 )
+	local mainBG = display.newImageRect( "arts/golf-l3.png", 720, 1280 )
 	mainBG.x = 360
 	mainBG.y = 640
 	physics.addBody( mainBG, "static", 
@@ -235,12 +235,12 @@ function scene:create( event )
 		{density=Bottom.density, friction=Bottom.friction, bounce=Bottom.bounce, shape=Bottom}
 	)
 
-	local movingBlock = display.newImageRect( "blockLines.png", 300, 182 )
+	local movingBlock = display.newImageRect( "arts/blockLines.png", 300, 182 )
 	movingBlock.x = 150
 	movingBlock.y = 817
 	physics.addBody( movingBlock, "static", { density=1, friction=0.3, bounce=0.2 } )
 
-	local holeGumbo = display.newImageRect( "hole.png", 49, 49 )
+	local holeGumbo = display.newImageRect( "arts/hole.png", 49, 49 )
 	holeGumbo.x = 288
 	holeGumbo.y = 110
 -------------------------------------------------------------------------

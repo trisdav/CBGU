@@ -237,7 +237,7 @@ function scene:create( event )
 	leftbottomsand.density = 1; leftbottomsand.friction = 0.3; leftbottomsand.bounce = 0.2; 
 
 
-	local mainBG = display.newImageRect( "golf-l2.png", 720, 1280 )
+	local mainBG = display.newImageRect( "arts/golf-l2.png", 720, 1280 )
 	mainBG.x = 360
 	mainBG.y = 640
 	physics.addBody( mainBG, "static", 
@@ -252,11 +252,11 @@ function scene:create( event )
 		{density=shape_11.density, friction=shape_11.friction, bounce=shape_11.bounce, shape=shape_11}
 	)
 
-	local holeGumbo = display.newImageRect( "hole.png", 49, 49 )
+	local holeGumbo = display.newImageRect( "arts/hole.png", 49, 49 )
 	holeGumbo.x = 99
 	holeGumbo.y = 199
 	
-	 Sand = display.newImageRect( "Sand.png", 307, 367 )
+	 Sand = display.newImageRect( "arts/Sand.png", 307, 367 )
 	Sand.x = 183
 	Sand.y = 495
 -------------------------------------------------------------------------
