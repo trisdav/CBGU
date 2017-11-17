@@ -9,15 +9,17 @@ local scene = composer.newScene()
 -- -----------------------------------------------------------------------------------
 
 local objects = {}; -- A list of objects.
-local points; -- A sum of possitive and negative objects.
+local points = 0; -- A sum of possitive and negative objects.
 
 
 local function positiveObject(event)
 	points = points + 1;
+	display.remove(event.target);
 end
 
 local function negativeObject(event)
 	points = points - 1;
+	display.remove(event.target);
 end
 
 local function createObject()
@@ -68,8 +70,8 @@ local function gameOver(event)
 end
 
 local function startGame(bar)
-	timer.performWithDelay((1000 * 60) * 2, gameOver); -- This game is timed.
-	transition.to(bar, {x = 65, xScale = 0, time = (1000 * 60) * 2})
+	timer.performWithDelay((1000 * 60) * 1, gameOver); -- This game is timed.
+	transition.to(bar, {x = 65, xScale = 0, time = (1000 * 60) * 1})
 	objectGenerator = timer.performWithDelay(800 * math.random(2,4), createObject, 0)
 
 
