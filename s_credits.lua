@@ -1,4 +1,6 @@
 local composer = require( "composer" )
+local graphics = require("graphics")
+local audio = require("audio")
 local scene = composer.newScene()
 --Center points used for relative positioning.
 local xCenter = display.contentCenterX;
@@ -41,6 +43,46 @@ local bo_menu = {
                strokeColor = {default = {1,0.4,0,1}, over = {0.8,0.8,1,1}},
                strokeWidth = 10
             }
+
+ local fishOpts = { 
+                      frames = {
+                                -- Frame 1, mouth open
+                                 {
+                                    x = 167,
+                                    y = 4,
+                                    width = 627,
+                                    height = 410  
+                                 },
+                                -- Frame 2, mouth closed
+                                 {
+                                    x = 183,
+                                    y = 430,
+                                    width = 593,
+                                    height = 274
+                                 }
+                                }
+                  }
+-- Fish sheet
+local fishSheet = graphics.newImageSheet("arts/fishSprite.png", fishOpts)
+
+local fishSeq = {
+                  { name = "open", start = 1, count = 1, time = 1},
+                  { name = "closed", start = 2, count = 1, time = 1}
+                }
+local willy = audio.loadStream("arts/WilhelmScream.wav")
+
+local function AAAAAAAH(event)
+   print("Event")
+   print(event.target.sequence)
+   if(event.target.sequence == "closed")then
+      event.target:setSequence("open");
+      event.target:play()
+      audio.play(willy)
+   else
+      event.target:setSequence("closed");
+      event.target:play()
+   end
+end
 ---------------------------------------------------------------------------------
  
 -- "scene:create()"
@@ -56,12 +98,18 @@ function scene:create( event )
       local zachText = display.newText("Zach Parker", display.contentCenterX, display.contentCenterY + (64 * 2), display.contentWidth, display.contentHeight, native.systemFont, 64, "center") 
       local lostText = display.newText("Brian \"Lost\" Lofty", display.contentCenterX, display.contentCenterY + (64 * 3), display.contentWidth, display.contentHeight, native.systemFont, 64, "center") 
       local brandiText = display.newText("Brandi LeBaron", display.contentCenterX, display.contentCenterY + (64 * 4), display.contentWidth, display.contentHeight, native.systemFont, 64, "center") 
-
+      local bg = display.newImage("arts/cafeteriaBG1.png", 360, 640)
+      fishSprite = display.newSprite(fishSheet, fishSeq);
+      fishSprite:setSequence("closed")
+      --fishSprite:scale(.5,.5)
+      fishSprite.x = display.contentCenterX;
+      fishSprite.y = display.contentCenterY;
+      fishSprite:addEventListener("tap", AAAAAAAH);
       --myText.align = "center";
-      myText:setFillColor(1,1,0)
-      zachText:setFillColor(1,1,0)
-      lostText:setFillColor(1,1,0)
-      brandiText:setFillColor(1,1,0)
+      myText:setFillColor(0,0,0)
+      zachText:setFillColor(0,0,0)
+      lostText:setFillColor(0,0,0)
+      brandiText:setFillColor(0,0,0)
       b_menu = w_button.newButton(bo_menu)
       b_menu._view._label.size = 64
       sceneGroup:insert(developedText)
@@ -70,6 +118,10 @@ function scene:create( event )
       sceneGroup:insert(lostText)
       sceneGroup:insert(brandiText)
       sceneGroup:insert(b_menu)
+      sceneGroup:insert(fishSprite)
+      sceneGroup:insert(bg)
+            bg:toBack();
+
 end
  
 -- "scene:show()"
