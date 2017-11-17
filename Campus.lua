@@ -41,6 +41,7 @@ end
 
 --event handler for cbg button
 local function cbgButtonEvent(event)
+  print("Going to CBG...")
   composer.gotoScene("CBG", classTrans)
 end
 
@@ -51,7 +52,8 @@ end
 
 --event handler for cafeteria button
 local function cafeteriaButtonEvent(event)
-  print("Hello")
+  print("Going to cafeteria...")
+  composer.gotoScene("Cafeteria", classTrans)
 end
 
 --event handler for store button
