@@ -17,10 +17,12 @@ local speedY = 0
 local prevTime = 0
 local prevX = 0
 local prevY = 0
-local gameOver = false
+local isGameOver = false
+local goals = 0
 
 --gets the velocity of the ball
 function trackVelocity(event)
+  if isGameOver == false then
     local timePassed = event.time - prevTime
     prevTime = prevTime + timePassed
      local index = #ballTable
@@ -31,43 +33,44 @@ function trackVelocity(event)
       prevX = ballTable[index].x
       prevY = ballTable[index].y
     end
+  end
 end
 
 --handles dragging the ball
 local function moveBall( event )
-    local ball = event.target
+      local ball = event.target
 
-    local phase = event.phase
-    if "began" == phase then
-        display.getCurrentStage():setFocus( ball )
+      local phase = event.phase
+      if "began" == phase then
+          display.getCurrentStage():setFocus( ball )
 
-        -- Store initial position
-        ball.x0 = event.x - ball.x
-        ball.y0 = event.y - ball.y
+          -- Store initial position
+          ball.x0 = event.x - ball.x
+          ball.y0 = event.y - ball.y
 
-        -- Avoid gravitational forces
-        event.target.bodyType = "kinematic"
+          -- Avoid gravitational forces
+          event.target.bodyType = "kinematic"
 
-        -- Stop current motion, if any
-        event.target:setLinearVelocity( 0, 0 )
-        event.target.angularVelocity = 0
+          -- Stop current motion, if any
+          event.target:setLinearVelocity( 0, 0 )
+          event.target.angularVelocity = 0
 
-    else
-        if "moved" == phase then
-            ball.x = event.x - ball.x0
-            ball.y = event.y - ball.y0
-            if ball.x > display.contentCenterX then
-              ball.x = display.contentCenterX
-            end
-            if ball.y < display.contentCenterY then
-              ball.y = display.contentCenterY
-            end
-        elseif "ended" == phase or "cancelled" == phase then
-            ball:setLinearVelocity(speedX/5, speedY/5)
-            display.getCurrentStage():setFocus( nil )
-            ball:removeEventListener("touch",moveBall)
-            event.target.bodyType = "dynamic"
-        end
+      else
+          if "moved" == phase then
+              ball.x = event.x - ball.x0
+              ball.y = event.y - ball.y0
+              if ball.x > display.contentCenterX then
+                ball.x = display.contentCenterX
+              end
+              if ball.y < display.contentCenterY then
+                ball.y = display.contentCenterY
+              end
+          elseif "ended" == phase or "cancelled" == phase then
+              ball:setLinearVelocity(speedX/5, speedY/5)
+              display.getCurrentStage():setFocus( nil )
+              ball:removeEventListener("touch",moveBall)
+              event.target.bodyType = "dynamic"
+          end
     end
 
     return true
@@ -89,7 +92,7 @@ local function destroyBall()
   local index = #ballTable
   display.remove(ballTable[index])
   --creates a new ball if the game isn't over yet
-  if gameOver == false then
+  if isGameOver == false then
       createBall()
   end
 end
@@ -98,21 +101,33 @@ end
 local function ballFloorCollision(event)
   if event.phase == "began" then
     --delete with a timer because it crashes otherwise
-    local t = timer.performWithDelay(2, destroyBall)
+    local t = timer.performWithDelay(100, destroyBall)
   end
 end
 
---function to start the game
-local function Start(event)
-   if(event.phase == "ended") then
-     display.remove(b_start)
-     createBall()
-   end
+--adds 1 to the totals goals when the ball collides with the goalSensor
+local function goalCollision(event)
+  if event.phase == "began" then
+    goals = goals + 1
+    goalText.text = "Goals: " .. goals
+  end
 end
 
---will start the timer
-local function startTimer()
-  t = timer.performWithDelay()
+--ends the minigame
+local function gameOver()
+  isGameOver = true;
+  local index = #ballTable
+  display.remove(ballTable[index])
+end
+
+local function startGame(event)
+  if(event.phase == "ended") then
+    display.remove(b_start)
+    createBall()
+    timer.performWithDelay((1000 * 60) * 1, gameOver); -- This game is timed. 1 minute
+    transition.to(timeBar, {x = 65, xScale = 0, time = (1000 * 60) * 1})
+    objectGenerator = timer.performWithDelay(800 * math.random(2,4), createObject, 0)
+  end
 end
 
 --button to start game
@@ -120,7 +135,7 @@ local bo_start = { left = display.contentCenterX/2, --center = width/2
                   top = display.contentCenterY/4,
                   id = "Start",
                   label = "Start Game",
-                  onEvent = Start,
+                  onEvent = startGame,
                   shape = "roundedRect",
                   width = 400,
                   height = 160,
@@ -190,9 +205,10 @@ function scene:create( event )
     net = display.newImage("net.png", 585, 455)
 
     --creates the floor of the court
-    courtBottom = display.newRect( display.contentCenterX, 1200, display.contentWidth, 180)
+    courtBottom = display.newRect( display.contentCenterX, 1235, display.contentWidth, 89)
     courtBottom:setFillColor((245/255),(211/255),(139/255))
     courtBottom:addEventListener("collision", ballFloorCollision)
+    physics.addBody(courtBottom, "static")
 
     --creates a wall to the right so the ball doesn't go off screen
     rightWall = display.newRect( 724, display.contentCenterY, 10, display.contentHeight )
@@ -206,18 +222,27 @@ function scene:create( event )
     leftWall = display.newRect( -10, display.contentCenterY, 10, display.contentHeight)
     physics.addBody(leftWall, "static")
 
+    --sensor to see if a goal is made
+    goalSensor = display.newRect( 585, 455, 100, 10 )
+    goalSensor:addEventListener("collision", goalCollision)
+    physics.addBody(goalSensor, "static")
+    goalSensor.isSensor = true;
+    goalSensor.isVisible = false;
+
+    goalText = display.newText( "Goals: " .. goals, display.contentCenterX, 40 )
+    goalText:setFillColor(0,0,0)
+    goalText.size = 45
+
     --display start button
     b_start = widget.newButton(bo_start)
     b_start._view._label.size = 64
 
     local bg = display.newImage("arts/cafeteriaBG1.png", 360, 640)
     sceneGroup:insert(bg);
-    local timeBar = display.newImage("arts/barfill.png", 355, 110)
+    timeBar = display.newImage("arts/barfill.png", 355, 110)
     timeBar:scale(1.16,1.3)
     sceneGroup:insert(timeBar);
-    timeBar:toBack();
 
-    physics.addBody(courtBottom, "static")
     sceneGroup:insert(backboard)
     sceneGroup:insert(courtBottom)
     sceneGroup:insert(rimFront)
@@ -229,6 +254,7 @@ function scene:create( event )
     sceneGroup:insert(netBottom)
     sceneGroup:insert(net)
     background:toFront()
+    sceneGroup:insert(goalText)
     net:toFront()
     netBottom:toFront()
 
