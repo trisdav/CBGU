@@ -11,23 +11,6 @@ local scene = composer.newScene()
 local objects = {}; -- A list of objects.
 local points; -- A sum of possitive and negative objects.
 
-local function createObject()
-	local o = math.random(1, 10); -- Object
-	local theObject;
-	if(o == 1) then
-	elseif(o == 2) then
-	elseif(o == 3) then
-	elseif(o == 4) then
-	elseif(o == 5) then
-	elseif(o == 6) then
-	elseif(o == 7) then
-	elseif(o == 8) then
-	elseif(o == 9) then
-	elseif(o == 10) then
-	else
-	end
-	return theObject;
-end
 
 local function positiveObject(event)
 	points = points + 1;
@@ -37,6 +20,47 @@ local function negativeObject(event)
 	points = points - 1;
 end
 
+local function createObject()
+	local o = math.random(1, 6); -- Object
+	local theObject;
+	theObject = display.newRect(math.random(200, display.contentWidth-200), display.contentHeight + 100, 50,50)
+	theObject:setFillColor(math.random(), math.random(), math.random())
+
+	physics.addBody(theObject, "dynamic", {isSensor = true})
+	theObject:setLinearVelocity(math.random(-100,100), -150 * math.random(4,6));
+
+
+	if(o == 1) then
+		theObject:setFillColor(1,1,0)
+		theObject:addEventListener("tap", negativeObject)
+	elseif(o == 2) then
+		theObject:setFillColor(0,0,1)
+		theObject:addEventListener("tap", positiveObject)
+	elseif(o == 3) then
+		theObject:setFillColor(1,0,0)
+		theObject:addEventListener("tap", negativeObject)
+	elseif(o == 4) then
+		theObject:setFillColor(0,1,0)
+		theObject:addEventListener("tap", positiveObject)
+	elseif(o == 5) then
+		theObject:setFillColor(1,.5,.5)
+		theObject:addEventListener("tap", negativeObject)
+	elseif(o == 6) then
+		theObject:setFillColor(1,0,1)
+		theObject:addEventListener("tap", positiveObject)
+	--elseif(o == 7) then
+	--elseif(o == 8) then
+	--elseif(o == 9) then
+	--elseif(o == 10) then
+	else
+	end
+	--return theObject;
+	local function kill()
+		display.remove(theObject);
+	end
+	timer.performWithDelay(1000 * 10 , kill);
+end
+
 local function gameOver(event)
 	-- Game over things.
 end
@@ -44,9 +68,8 @@ end
 local function startGame()
 	timer.performWithDelay((1000 * 60) * 2, gameOver); -- This game is timed.
 	--timer.performWithDelay((100 * math.random(1,20), )
+
 end
-
-
 
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
@@ -56,7 +79,8 @@ end
 function scene:create( event )
 
     local sceneGroup = self.view
-
+    physics.start();
+    timer.performWithDelay(800 * math.random(2,4), createObject, 0)
     -- Code here runs when the scene is first created but has not yet appeared on screen
 
 end
