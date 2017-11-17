@@ -25,7 +25,7 @@ end
 local function createObject()
 	local o = math.random(1, 6); -- Object
 	local theObject;
-	theObject = display.newRect(math.random(200, display.contentWidth-200), display.contentHeight + 100, 50,50)
+	theObject = display.newRect(math.random(200, display.contentWidth-200), display.contentHeight + 100, 100,100)
 	theObject:setFillColor(math.random(), math.random(), math.random())
 
 	physics.addBody(theObject, "dynamic", {isSensor = true})
@@ -33,7 +33,7 @@ local function createObject()
 
 
 	if(o == 1) then
-		theObject:setFillColor(1,1,0)
+		theObject:setFillColor(1,1,.5)
 		theObject:addEventListener("tap", negativeObject)
 	elseif(o == 2) then
 		theObject:setFillColor(0,0,1)
@@ -86,6 +86,7 @@ function scene:create( event )
 
     local sceneGroup = self.view
     physics.start();
+    physics.setDrawMode("hybrid")
     local bg = display.newImage("arts/cafeteriaBG1.png", 360, 640)
     sceneGroup:insert(bg);
     local timeBar = display.newImage("arts/barfill.png", 355, 110)
