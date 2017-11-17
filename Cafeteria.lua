@@ -60,14 +60,18 @@ local function createObject()
 	end
 	timer.performWithDelay(1000 * 10 , kill);
 end
-
+local objectGenerator;
 local function gameOver(event)
 	-- Game over things.
+	timer.cancel(objectGenerator);
+	-- TODO: Add a button to return to campus.
 end
 
-local function startGame()
+local function startGame(bar)
 	timer.performWithDelay((1000 * 60) * 2, gameOver); -- This game is timed.
-	--timer.performWithDelay((100 * math.random(1,20), )
+	transition.to(bar, {x = 65, xScale = 0, time = (1000 * 60) * 2})
+	objectGenerator = timer.performWithDelay(800 * math.random(2,4), createObject, 0)
+
 
 end
 
@@ -80,7 +84,14 @@ function scene:create( event )
 
     local sceneGroup = self.view
     physics.start();
-    timer.performWithDelay(800 * math.random(2,4), createObject, 0)
+    local bg = display.newImage("arts/cafeteriaBG1.png", 360, 640)
+    sceneGroup:insert(bg);
+    local timeBar = display.newImage("arts/barfill.png", 355, 110)
+    timeBar:scale(1.16,1.3)
+    sceneGroup:insert(timeBar);
+   	timeBar:toBack();
+   	bg:toBack();
+   	startGame(timeBar);
     -- Code here runs when the scene is first created but has not yet appeared on screen
 
 end
