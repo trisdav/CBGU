@@ -19,6 +19,7 @@ local prevX = 0
 local prevY = 0
 local isGameOver = false
 local goals = 0
+local isPhaseSkipped = true
 
 --gets the velocity of the ball
 function trackVelocity(event)
@@ -54,9 +55,10 @@ local function moveBall( event )
           -- Stop current motion, if any
           event.target:setLinearVelocity( 0, 0 )
           event.target.angularVelocity = 0
+          isPhaseSkipped = false
 
       else
-          if "moved" == phase then
+          if "moved" == phase and isPhaseSkipped == false then
               ball.x = event.x - ball.x0
               ball.y = event.y - ball.y0
               if ball.x > display.contentCenterX then
@@ -64,6 +66,12 @@ local function moveBall( event )
               end
               if ball.y < display.contentCenterY then
                 ball.y = display.contentCenterY
+              end
+              if ball.y > 1140 then
+                ball.y = 1140
+              end
+              if ball.x < 50 then
+                ball.x = 50
               end
           elseif "ended" == phase or "cancelled" == phase then
               ball:setLinearVelocity(speedX/5, speedY/5)
@@ -85,12 +93,14 @@ local function createBall()
   ballTable[index]:addEventListener("touch", moveBall)
   background:toFront()
   ballTable[index]:toFront()
+  net:toFront()
 end
 
 --destroys the basketball
 local function destroyBall()
   local index = #ballTable
   display.remove(ballTable[index])
+  isPhaseSkipped = true;
   --creates a new ball if the game isn't over yet
   if isGameOver == false then
       createBall()
@@ -120,6 +130,7 @@ local function gameOver()
   display.remove(ballTable[index])
 end
 
+--starts the game
 local function startGame(event)
   if(event.phase == "ended") then
     display.remove(b_start)
@@ -252,6 +263,7 @@ function scene:create( event )
     sceneGroup:insert(netPart1)
     sceneGroup:insert(netPart2)
     sceneGroup:insert(netBottom)
+    sceneGroup:insert(background)
     sceneGroup:insert(net)
     background:toFront()
     sceneGroup:insert(goalText)
