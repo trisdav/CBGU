@@ -1,4 +1,5 @@
 -- Written by Tristan Davis
+-- Last edited 11/19/17
 local composer = require( "composer" )
 local physics = require("physics")
 local backButtons = require("objects.menu_button")
@@ -121,13 +122,16 @@ local objectGenerator;
 local function gameOver(event)
 	-- Game over things.
 	timer.cancel(objectGenerator);
-	back_button.campus.isVisible = true;
 	-- TODO: Add a button to return to campus.
 end
 
+local function timeOut(event)
+		back_button.campus.isVisible = true;
+end
+
 local function startGame(bar)
-	timer.performWithDelay(((1000 * 60) * 1) + 5000, gameOver); -- This game is timed.
-	transition.to(bar, {x = 65, xScale = 0, time = (1000 * 60) * 1})
+	timer.performWithDelay(((1000 * 60) * .3) -6000, gameOver); -- This game is timed.
+	transition.to(bar, {x = 65, xScale = 0, time = (1000 * 60) * .3, onComplete = timeOut})
 	objectGenerator = timer.performWithDelay(800 * math.random(2,4), createObject, 0)
 
 
@@ -141,7 +145,20 @@ end
 function scene:create( event )
 
     local sceneGroup = self.view
-    physics.start();
+    physics.start();	    local bg = display.newImage("arts/cafeteriaBG1.png", 360, 640)
+	    sceneGroup:insert(bg);
+	    local timeBar = display.newImage("arts/barfill.png", 355, 110)
+	    timeBar:scale(1.16,1.3)
+	    sceneGroup:insert(timeBar);
+	   	timeBar:toBack();
+	   	bg:toBack();
+	   	startGame(timeBar);
+	   	back_button = backButtons.newCampus("Cafeteria");
+		sceneGroup:insert(back_button.campus);
+		back_button.campus.isVisible = false;
+		pointText = display.newText("Score: 0", display.contentCenterX, 40, native.systemFont, 45)
+		pointText:setFillColor(0,0,0)
+		sceneGroup:insert(pointText);
     -- Code here runs when the scene is first created but has not yet appeared on screen
 
 
@@ -158,20 +175,6 @@ function scene:show( event )
     if ( phase == "will" ) then
         -- Code here runs when the scene is still off screen (but is about to come on screen)
 	    --physics.setDrawMode("hybrid")
-	    local bg = display.newImage("arts/cafeteriaBG1.png", 360, 640)
-	    sceneGroup:insert(bg);
-	    local timeBar = display.newImage("arts/barfill.png", 355, 110)
-	    timeBar:scale(1.16,1.3)
-	    sceneGroup:insert(timeBar);
-	   	timeBar:toBack();
-	   	bg:toBack();
-	   	startGame(timeBar);
-	   	back_button = backButtons.newCampus();
-		sceneGroup:insert(back_button.campus);
-		back_button.campus.isVisible = false;
-		pointText = display.newText("Score: 0", display.contentCenterX, 40, native.systemFont, 45)
-		pointText:setFillColor(0,0,0)
-		sceneGroup:insert(pointText);
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
 

@@ -1,3 +1,25 @@
+-- Written by Tristan Davis
+-- Last edited 11/19/17
+
+--[[
+	--Usage:
+	local backButtons = require("objects.menu_button") -- Include this lua file
+	--Button that returns to campus map
+	button = backButtons.newCampus("Cafeteria"); -- substitute your scene name for "Cafeteria"
+	--or button that returns to main menu
+	button = backButtons.newMenu("Cafeteria");
+
+	--For campus button
+	sceneGroup:insert(button.campus); -- Be sure to add it to scene group.
+	-- For menu button
+	sceneGroup:insert(button.menu);
+	--For campus button
+	button.campus.isVisible = false; -- Make sure it is not visible until it is needed.
+	-- For menu button
+	button.menu.isVisible = false;
+
+]]
+
 local composer = require( "composer" )
 local w_button = require("widget")
 
@@ -5,12 +27,14 @@ local w_button = require("widget")
 local t = {}
 local mt = {__index = t}
 
-function t.newMenu()
+function t.newMenu(oldScene)
    --Scene transition options
    local transition = {effect = "slideLeft", time = 500}
    --button functions
    function menuFunc(event)
       if(event.phase == "ended") then
+         event.target.isVisible = false;
+         oldcomposer.removeScene(oldScene)
          composer.gotoScene("s_main_menu", transition)
       end
    end
@@ -39,12 +63,15 @@ function t.newMenu()
       return mt;
 end
 
-function t.newCampus()
+function t.newCampus(oldScene)
+
    --Scene transition options
    local transition = {effect = "slideLeft", time = 500}
    --button functions
    function campusFunc(event)
       if(event.phase == "ended") then
+         event.target.isVisible = false;
+         composer.removeScene(oldScene);
          composer.gotoScene("s_main_menu", transition)
       end
    end
