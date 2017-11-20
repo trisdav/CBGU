@@ -9,6 +9,7 @@
 
 
 local composer = require( "composer" )
+local backButtons = require("objects.menu_button")
 
 local scene = composer.newScene()
 
@@ -30,6 +31,10 @@ local strokeCount = 1;
 local win = 0;
 local sandDamp = 0;
 local currentLevel;
+local isFinal = true; -- If this is the final coarse
+local thisLevel = "objects.golfLevel3"; -- Set this so that the current scene name is known.
+local params = {};
+params.CBGScore = nil;
 
 -- Add any physics bodies here, it is necessary for removal of the scene.
 local ball;
@@ -47,10 +52,15 @@ local transOpt = {
 
 local function nextLevel()
 	transOpt.params.golfLevel = transOpt.params.golfLevel + 1;
+	transOpt.params.CBGScore = (win/strokeCount) + params.CBGScore;
+	
 	--Remove scene objects
-	composer.removeScene("objects.golfLevel3")
-
-	if(transOpt.params.golfLevel > 2) then
+	if(isFinal) then
+		--composer.removeScene(thisLevel)
+		params.CBGScore = math.round(transOpt.params.CBGScore);
+		local button = backButtons.newHscore(thisLevel, params);
+		button.isVisible = true;
+	elseif(transOpt.golfLevel > 3 ) then
 		composer.gotoScene("objects.golfLevel1");
 	elseif(transOpt.params.golfLevel == 2) then
 		composer.gotoScene("objects.golfLevel2");
@@ -286,6 +296,14 @@ function scene:create( event )
 	defaultDamp = ball.linearDamping;
 	putter:addEventListener("touch", putterEvent);
 	hole:toFront();
+	
+	-- Set up the scoring system
+	if(event.params ~= nil) then
+		params.CBGScore = event.params.CBGScore or 0; -- CBGScore
+	else
+		params.CBGScore = 0;
+	end
+	
 
 	sceneGroup:insert(holeSensor);
 	holeSensor:toBack();

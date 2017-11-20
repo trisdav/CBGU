@@ -30,6 +30,9 @@ local strokeCount = 1;
 local win = 0;
 local sandDamp = 0;
 local currentLevel;
+local isFinal = false; -- Set true if this is the final course
+local params = {};
+params.CBGScore = nil;
 
 -- Add any physics bodies here, it is necessary for removal of the scene.
 local ball;
@@ -47,17 +50,17 @@ local transOpt = {
 
 local function nextLevel()
 	transOpt.params.golfLevel = transOpt.params.golfLevel + 1;
+	transOpt.params.CBGScore = (win/strokeCount) + params.CBGScore;
 	--Remove scene objects
 	composer.removeScene("objects.golfLevel2")
-
-	if(transOpt.params.golfLevel > 3) then
-		composer.gotoScene("objects.golfLevel1");
-	elseif(transOpt.params.golfLevel == 2) then
-		composer.gotoScene("objects.golfLevel2");
-	elseif(transOpt.params.golfLevel == 1) then
-		composer.gotoScene("objects.golfLevel1");
+	if(isFinal) then
+		--button is visible
+	elseif(transOpt.params.golfLevel > 3) then
+		composer.gotoScene("objects.golfLevel1", transOpt);
 	elseif(transOpt.params.golfLevel == 3) then
-		composer.gotoScene("objects.golfLevel3")
+		composer.gotoScene("objects.golfLevel3", transOpt);
+	elseif(transOpt.params.golfLevel == 2) then
+		composer.gotoScene("objects.golfLevel2", transOpt);
 	else
 		print("Thats odd, that level does not seem to exist.")
 	end
@@ -296,6 +299,13 @@ function scene:create( event )
 	putter:addEventListener("touch", putterEvent);
 	hole:toFront();
 
+		-- Set up the scoring system
+	if(event.params ~= nil) then
+		params.CBGScore = event.params.CBGScore or 0; -- CBGScore
+	else
+		params.CBGScore = 0;
+	end
+	
 	sceneGroup:insert(holeSensor);
 	holeSensor:toBack();
 	sceneGroup:insert(narrationText);

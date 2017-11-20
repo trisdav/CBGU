@@ -9,6 +9,8 @@
 	1. Update the nextLevel function to include the latest level.
 	2. Update the scene:destroy function to destroy all old physics objects.
 	3. Add any objects to the scene group.
+	--- Note ---
+	This is old. It needs to be updated.
 ]]
 
 
