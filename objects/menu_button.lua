@@ -1,22 +1,32 @@
 -- Written by Tristan Davis
 -- Last edited 11/19/17
+-- Last edited 11/20/17
 
 --[[
 	--Usage:
-	local backButtons = require("objects.menu_button") -- Include this lua file
-	--Button that returns to campus map
-	button = backButtons.newCampus("Cafeteria"); -- substitute your scene name for "Cafeteria"
-	--or button that returns to main menu
-	button = backButtons.newMenu("Cafeteria");
+	-- For going back to Highscore.lua
+		local backButtons = require("objects.menu_button") -- Include this lua file
+		local button = backButtons.newHscore("cafeteria", -- The name of the current scene
+											params) -- Parameters, e.g. params.cafeteriaScore
+		sceneGroup:insert(button.hscore); -- Be sure to insert into scene group
+		button.hscore.isVisible = false; -- Keep hidden until needed.
+		
+		
+	-- For going back to campus or menu.
+		local backButtons = require("objects.menu_button") -- Include this lua file
+		--Button that returns to campus map
+		button = backButtons.newCampus("Cafeteria"); -- substitute your scene name for "Cafeteria"
+		--or button that returns to main menu
+		button = backButtons.newMenu("Cafeteria");
 
-	--For campus button
-	sceneGroup:insert(button.campus); -- Be sure to add it to scene group.
-	-- For menu button
-	sceneGroup:insert(button.menu);
-	--For campus button
-	button.campus.isVisible = false; -- Make sure it is not visible until it is needed.
-	-- For menu button
-	button.menu.isVisible = false;
+		--For campus button
+		sceneGroup:insert(button.campus); -- Be sure to add it to scene group.
+		-- For menu button
+		sceneGroup:insert(button.menu);
+		--For campus button
+		button.campus.isVisible = false; -- Make sure it is not visible until it is needed.
+		-- For menu button
+		button.menu.isVisible = false;
 
 ]]
 
@@ -97,6 +107,60 @@ function t.newCampus(oldScene)
       local b_campus = w_button.newButton(bo_campus)
       b_campus._view._label.size = 64
       mt.campus = b_campus;
+      return mt;
+end
+
+function t.newHscore(oldScene, oldParams)
+
+   --Scene transition options
+   local transition = {effect = "slideLeft",
+						time = 500,
+						params = { gymScore = nil,
+									classScore = nil,
+									dormScore = nil,
+									CBGScore = nil,
+									cafeteriaScore = nil}
+						}
+   --button functions
+   function hscoreFunc(event)
+      if(event.phase == "ended") then
+         event.target.isVisible = false;
+		 if(oldParams.dormScore ~= nil) then
+			transition.params.dormScore = oldParams.dormScore;
+		elseif(oldParams.gymScore ~= nil) then
+			transition.params.gymScore = oldParams.gymScore;
+		elseif(oldParams.CBGScore ~= nil) then
+			transition.params.CBGScore = oldParams.CBGScore;
+		elseif(oldParams.cafeteriaScore ~= nil) then
+			transition.params.cafeteriaScore = oldParams.cafeteriaScore;
+		end
+		 
+         composer.removeScene(oldScene);
+         composer.gotoScene("Highscores", transition)
+      end
+   end
+
+
+    --Button options
+   local bo_hscore = {
+                  left = display.contentCenterX - 200, --center = width/2
+                  top = display.contentCenterY + 400,
+                  id = "hscore",
+                  label = "Score Board",
+                  onEvent = hscoreFunc,
+                  shape = "roundedRect",
+                  width = 400,
+                  height = 160,
+                  cornerRadius = 30,
+                  fillColor = {default = {1,0,0,1}, over = {1,0.1,0.7,0.4}},
+                  strokeColor = {default = {1,0.4,0,1}, over = {0.8,0.8,1,1}},
+                  strokeWidth = 10
+               }
+
+
+      local b_hscore = w_button.newButton(bo_hscore)
+      b_hscore._view._label.size = 64
+      mt.hscore = b_hscore;
       return mt;
 end
 
