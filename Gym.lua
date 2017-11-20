@@ -1,6 +1,7 @@
 local composer = require( "composer" )
 local widget = require("widget")
 local physics = require("physics")
+local menuButton = require("objects.menu_button")
 
  local scene = composer.newScene()
 
@@ -20,6 +21,17 @@ local prevY = 0
 local isGameOver = false
 local goals = 0
 local isPhaseSkipped = true
+
+local options = {
+  effect = "fade",
+  time = 1000,
+  params = {
+    gymScore = goals,
+    classScore = nil,
+    dormScore = nil,
+    CBGScore = nil
+           }
+}
 
 --gets the velocity of the ball
 function trackVelocity(event)
@@ -61,15 +73,19 @@ local function moveBall( event )
           if "moved" == phase and isPhaseSkipped == false then
               ball.x = event.x - ball.x0
               ball.y = event.y - ball.y0
+              --if the ball is too far right keep it at the center x value
               if ball.x > display.contentCenterX then
                 ball.x = display.contentCenterX
               end
+              --if the ball is too high keep it at the center y
               if ball.y < display.contentCenterY then
                 ball.y = display.contentCenterY
               end
+              --prevents the ball from going below the court
               if ball.y > 1140 then
                 ball.y = 1140
               end
+              --prevents the ball from going off the screen to the left
               if ball.x < 50 then
                 ball.x = 50
               end
@@ -128,6 +144,9 @@ local function gameOver()
   isGameOver = true;
   local index = #ballTable
   display.remove(ballTable[index])
+  options.params.gymScore = goals
+  composer.gotoScene("Highscores", options)
+  composer.removeScene("Gym")
 end
 
 --starts the game
@@ -156,8 +175,6 @@ local bo_start = { left = display.contentCenterX/2, --center = width/2
                   strokeWidth = 10
                }
 
-
-
 -- -----------------------------------------------------------------------------------
 -- Scene event functions
 -- -----------------------------------------------------------------------------------
@@ -169,10 +186,10 @@ function scene:create( event )
     -- Code here runs when the scene is first created but has not yet appeared on screen
     physics.start()
     physics.setGravity( 0, 18 )
-    --physics.setDrawMode( "hybrid" )
+    physics.setDrawMode( "hybrid" )
     Runtime:addEventListener("enterFrame", trackVelocity)
     --set background image
-    background  = display.newImage("courtBackground.png")
+    background  = display.newImage("arts/courtBackground.png")
     background.x = display.contentCenterX
     background.y = display.contentCenterY
     background:toBack()
@@ -213,7 +230,7 @@ function scene:create( event )
     netBottom = display.newRect(585, 505, 2, 150)
     netBottom.rotation = 90
       --the rest of the net
-    net = display.newImage("net.png", 585, 455)
+    net = display.newImage("arts/net.png", 585, 455)
 
     --creates the floor of the court
     courtBottom = display.newRect( display.contentCenterX, 1235, display.contentWidth, 89)
@@ -308,9 +325,9 @@ end
 
 -- destroy()
 function scene:destroy( event )
-
     local sceneGroup = self.view
     -- Code here runs prior to the removal of scene's view
+    physics.stop()
 end
 
 
