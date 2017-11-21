@@ -26,6 +26,8 @@ local minGPA = 1.5
 local maxIQ = 140
 local minIQ = 71
 
+local params = { goalsScore = 0}
+
 --holds the images of the first 4 buildings
 local options =
 {
@@ -69,7 +71,6 @@ end
 
 --event handler for gym button
 local function gymButtonEvent(event)
-  print("Hello")
   composer.gotoScene("Gym")
 end
 
@@ -115,25 +116,28 @@ function scene:create( event )
     classButton:setFillColor(1,0,0)
     classButton:addEventListener("tap", classButtonEvent)
 
-    libraryButton = display.newImageRect(Buildings1, 3, 200, 200)
-    libraryButton.x = 200
-    libraryButton.y = 200
+    libraryButton = display.newImageRect(Buildings1, 3, 150, 150)
+    libraryButton.alpha = .9
+    libraryButton.x = 600
+    libraryButton.y = 900
     libraryButton:rotate(90)
     libraryButton:addEventListener("tap", libraryButtonEvent)
 
-    workButton = display.newRect( display.contentCenterX - 200, display.contentCenterY, 100, 100 )
+    workButton = display.newRect( display.contentCenterX - 200, display.contentCenterY-300, 100, 100 )
     workButton:setFillColor(1,0,1)
     workButton:addEventListener("tap", workButtonEvent)
 
-    gymButton = display.newImageRect(Buildings2, 1, 200, 200)
-    gymButton.x = 400
-    gymButton.y = 400
+    gymButton = display.newImageRect(Buildings2, 1, 150, 150)
+    gymButton.alpha = 0.93
+    gymButton.x = 115
+    gymButton.y = 600
     gymButton:rotate(90)
     gymButton:addEventListener("tap", gymButtonEvent)
 
-    partyButton = display.newImageRect(Buildings1, 2, 200, 200)
-    partyButton.x = 400
-    partyButton.y = 200
+    partyButton = display.newImageRect(Buildings1, 2, 150, 150)
+    partyButton.alpha = .9
+    partyButton.x = 88
+    partyButton.y = 890
     partyButton:rotate(90)
     partyButton:addEventListener("tap", partyButtonEvent)
 
@@ -141,17 +145,21 @@ function scene:create( event )
     cbgButton:setFillColor(0,0,1)
     cbgButton:addEventListener("tap", cbgButtonEvent)
 
-    dormButton = display.newImageRect(Buildings2, 2, 200, 200)
-    dormButton.x = 600
-    dormButton.y = 200
+    dormButton = display.newImageRect(Buildings2, 2, 150, 150)
+    dormButton.alpa = .9
+    dormButton.x = 88
+    dormButton.y = 1107
     dormButton:rotate(90)
     dormButton:addEventListener("tap", dormButtonEvent)
 
-    cafeteriaButton = display.newImageRect(Buildings1, 1, 200, 200)
+    cafeteriaButton = display.newImageRect(Buildings1, 1, 150, 150)
+    cafeteriaButton.alpha = .9
     cafeteriaButton.x = 600
-    cafeteriaButton.y = 400
+    cafeteriaButton.y = 1107
     cafeteriaButton:rotate(90)
     cafeteriaButton:addEventListener("tap", cafeteriaButtonEvent)
+
+    local background = display.newImage("arts/Map.png", display.contentCenterX, display.contentCenterY)
 
     --storeButton = display.newRect( display.contentCenterX, display.contentCenterY +200, 100, 100 )
     --storeButton:setFillColor(1,.2,0)
@@ -161,6 +169,7 @@ function scene:create( event )
     --inventoryButton:setFillColor(.5,.2,.5)
     --inventoryButton:addEventListener("tap", inventoryButtonEvent)
 
+    sceneGroup:insert(background)
     sceneGroup:insert(classButton)
     sceneGroup:insert(libraryButton)
     sceneGroup:insert(workButton)
