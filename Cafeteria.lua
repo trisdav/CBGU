@@ -1,5 +1,7 @@
 -- Written by Tristan Davis
 -- Last edited 11/19/17
+-- Last edited 11/20/17
+
 local composer = require( "composer" )
 local physics = require("physics")
 local backButtons = require("objects.menu_button")
@@ -15,6 +17,8 @@ local objects = {}; -- A list of objects.
 local points = 0; -- A sum of possitive and negative objects.
 local back_button;
 local pointText;
+local params = {};
+params.cafeScore = 0;
 -- All the foods
 local apple = "arts/apple.png"
 local cracker = "arts/cracker.png"
@@ -126,12 +130,16 @@ local function gameOver(event)
 end
 
 local function timeOut(event)
-		back_button.campus.isVisible = true;
+		params.cafeScore = points;
+
+		local button = backButtons.newHscore("cafeteria", -- The name of the current scene
+											params) -- Parameters, e.g. params.cafeteriaScore
+		button.hscore.isVisible = true;
 end
 
 local function startGame(bar)
-	timer.performWithDelay(((1000 * 60) * .3) -6000, gameOver); -- This game is timed.
-	transition.to(bar, {x = 65, xScale = 0, time = (1000 * 60) * .3, onComplete = timeOut})
+	timer.performWithDelay(((1000 * 60) * 2) -4000, gameOver); -- This game is timed.
+	transition.to(bar, {x = 65, xScale = 0, time = (1000 * 60) * 2, onComplete = timeOut})
 	objectGenerator = timer.performWithDelay(800 * math.random(2,4), createObject, 0)
 
 
@@ -145,7 +153,8 @@ end
 function scene:create( event )
 
     local sceneGroup = self.view
-    physics.start();	    local bg = display.newImage("arts/cafeteriaBG1.png", 360, 640)
+   		physics.start();
+   		local bg = display.newImage("arts/cafeteriaBG1.png", 360, 640)
 	    sceneGroup:insert(bg);
 	    local timeBar = display.newImage("arts/barfill.png", 355, 110)
 	    timeBar:scale(1.16,1.3)
@@ -153,9 +162,6 @@ function scene:create( event )
 	   	timeBar:toBack();
 	   	bg:toBack();
 	   	startGame(timeBar);
-	   	back_button = backButtons.newCampus("Cafeteria");
-		sceneGroup:insert(back_button.campus);
-		back_button.campus.isVisible = false;
 		pointText = display.newText("Score: 0", display.contentCenterX, 40, native.systemFont, 45)
 		pointText:setFillColor(0,0,0)
 		sceneGroup:insert(pointText);
