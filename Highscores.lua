@@ -40,6 +40,33 @@ local function writeData()
   end
 end
 
+--displays data to screen
+local function displayData(params, sceneGroup)
+  if params.gymScore ~= nil then
+    local highScoreText = display.newText("Highest Score: " .. data.gymScore, display.contentCenterX, 500)
+    sceneGroup:insert(highScoreText)
+    local currentScore = display.newText("Current Score: " .. params.gymScore, display.contentCenterX, 550)
+    sceneGroup:insert(currentScore)
+  elseif params.classScore ~= nil then
+    local highScoreText = display.newText("Highest Score: " ..  data.classScore, display.contentCenterX, 500)
+    sceneGroup:insert(highScoreText)
+    local currentScore = display.newText("Current Score: " .. params.classScore, display.contentCenterX, 550)
+    sceneGroup:insert(currentScore)
+  elseif params.dormScore ~= nil then
+    local highScoreText = display.newText("Highest Score: " .. data.dormScore, display.contentCenterX, 500)
+    sceneGroup:insert(highScoreText)
+    local currentScore = display.newText("Current Score: " .. params.dormScore, display.contentCenterX, 550)
+    sceneGroup:insert(currentScore)
+  elseif params.CBGScore ~= nil then
+    local highScoreText = display.newText("Highest Score: " .. data.CBGScore, display.contentCenterX, 500)
+    sceneGroup:insert(highScoreText)
+    local currentScore = display.newText("Current Score: " .. params.CBGScore, display.contentCenterX, 550)
+    sceneGroup:insert(currentScore)
+  end
+end
+
+
+
 --updates the data in the table
 local function updateData(params)
   if params.gymScore ~= nil and params.gymScore > data.gymScore then
@@ -66,6 +93,7 @@ function scene:create( event )
     readData()
     updateData(params)
     writeData()
+    displayData(params, sceneGroup)
 end
 
 
