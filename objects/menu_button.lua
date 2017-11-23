@@ -131,8 +131,10 @@ function t.newHscore(oldScene, oldParams)
 			transition.params.gymScore = oldParams.gymScore;
 		elseif(oldParams.CBGScore ~= nil) then
 			transition.params.CBGScore = oldParams.CBGScore;
-		elseif(oldParams.cafeteriaScore ~= nil) then
-			transition.params.cafeteriaScore = oldParams.cafeteriaScore;
+		elseif(oldParams.cafeScore ~= nil) then
+			transition.params.cafeScore = oldParams.cafeScore;
+      elseif(oldParams.classScore ~= nil) then
+         transition.params.classScore = oldParams.classScore;
 		end
 		 
          composer.removeScene(oldScene);

@@ -17,7 +17,8 @@ local data = {
    gymScore = 0,
    classScore = 0,
    dormScore = 0,
-   CBGScore = 0
+   CBGScore = 0,
+   cafeScore = 0
  }
 
 --reads in json data and decodes it
@@ -62,6 +63,11 @@ local function displayData(params, sceneGroup)
     sceneGroup:insert(highScoreText)
     local currentScore = display.newText("Current Score: " .. params.CBGScore, display.contentCenterX, 550)
     sceneGroup:insert(currentScore)
+  elseif params.cafeScore ~= nil then
+    local highScoreText = display.newText("Highest Score: " .. data.cafeScore, display.contentCenterX, 500)
+    sceneGroup:insert(highScoreText)
+    local currentScore = display.newText("Current Score: " .. params.cafeScore, display.contentCenterX, 550)
+    sceneGroup:insert(currentScore)
   end
 end
 
@@ -77,6 +83,8 @@ local function updateData(params)
     data.dormScore = params.dormScore
   elseif params.CBGScore ~= nil and params.CBGScore > data.CBGScore then
     data.CBGScore = params.CBGScore
+  elseif params.cafeScore ~= nil and params.cafeScore > data.cafeScore then
+    data.cafeScore = params.cafeScore
   end
 end
 

@@ -11,12 +11,14 @@
 -- Last edited by Tristan Davis 11/9/17
 -- Last edited by Tristan Davis 11/10/17
 --	Last edited 11-16-17
+-- Last edited 11/23/17
 -----------------------------------------------------------------------------------------
 local composer = require( "composer" )
 local widget = require("widget")
 local scene = composer.newScene()
 local physics = require("physics")
-display.setDefault("background", 1, 1, 1)
+local backButtons = require("objects.menu_button")
+local extras = require("objects.extras")
 --	composer.removeScene("Class")
 
 --------------------------------------------------------------------------
@@ -201,9 +203,13 @@ display.setDefault("background", 1, 1, 1)
                 }
             }
         }
+
+
 local galphabetSheet = graphics.newImageSheet("arts/galphabet.png", galphabetSheetOptions)
 
 local ansKey = {}; -- These are the sprites of the answer keys.
+local indicatorKey = {}; -- These are used to indicate progress.
+local energyUpdateTimer;
 
 
 --------------- Velocity bar -------------------
@@ -211,6 +217,7 @@ local numKeys = 5;
 local energyBar;
 local myFidget;
 local tired = {};
+local tally = 0;
 
 local function updateVel(event)
     energyBar:setProgress(myFidget.angularVelocity/5580) --5,600 approx max angular vel
@@ -245,6 +252,7 @@ local function genKeys(event)
     for i = 1, numKeys, 1 do
         ansKey[i]:setFrame(boardKeys[i]);
         ansKey[i].isVisible = true;
+        indicatorKey[i].isVisible = true;
     end
     currKey = 1;
 
@@ -254,11 +262,15 @@ local function checkKey(event)
         if(event.phase == "ended") then
             print(event.target.id .. " == " .. boardKeys[currKey])
             if(event.target.id == boardKeys[currKey]) then
+                indicatorKey[currKey]:setSequence("green"); -- Green
                 currKey = currKey + 1;
+                tally = tally + 1;
                 if(currKey > numKeys) then
                     currKey = 1;
                     for i = 1, numKeys, 1 do
                         ansKey[i].isVisible = false
+                        indicatorKey[i].isVisible = false;
+                        indicatorKey[i]:setSequence("red")
                     end
                     timer.performWithDelay(2000, genKeys);
                 end
@@ -334,6 +346,30 @@ function addKeyboard(grp)
         end
 end
 
+local function spin(event)
+
+    currentOmega = myFidget.angularVelocity;
+    myFidget.angularVelocity = 250 + currentOmega
+end
+
+
+local function gameOver()
+    active = false;
+    timer.cancel(energyUpdateTimer)
+    myFidget:removeEventListener("tap", spin)
+    physics.stop();
+    local params = {};
+    params.classScore = tally;
+    local button = backButtons.newHscore("Class", -- The name of the current scene
+                                            params) -- Parameters, e.g. params.cafeteriaScore
+end
+
+local function startGame(bar)
+    timer.performWithDelay((1000 * 60 ), gameOver); -- This game is timed.
+    bar.timeScale = (1); -- Default time is 1 minute.
+    bar:play();
+end
+        
 
 -- local forward references should go here
 --------------------------------------------------------------------------
@@ -342,8 +378,32 @@ end
 function scene:create( event )
     local sceneGroup = self.view
     physics.start()
+    physics.setDrawMode("hybrid")
+    -- Add background
+    local bg = display.newImage("arts/cafeteriaBG1.png", 360, 640)
+    sceneGroup:insert(bg);
+    -- Add time indicator
+    local timeImageSheet = graphics.newImageSheet("arts/barfill.png", extras.getBarFrames())
+    local timeSprite = display.newSprite(timeImageSheet, extras.getBarSequence())
+    timeSprite.anchorY = .5;
+    timeSprite.anchorX = 0;
+    timeSprite.x = 65;
+    timeSprite.y = 111;
+    timeSprite:scale(1.164,1.5)
+
     -- Add fidget spinner
-    myFidget = fidget:new()
+    physics.setGravity(0,0)
+    local myOptions = {
+                        width = 200, height = 200
+    }
+    local currentOmega = 0;
+    myFidget = display.newImage("arts/educational_instrument.png" )
+    myFidget.x = display.contentCenterX
+    myFidget.y = display.contentCenterY
+    physics.addBody(myFidget, "dynamic", {isSensor = true})
+    myFidget.angularDamping = .2
+    myFidget:addEventListener("tap", spin)
+
     sceneGroup:insert(myFidget)
     -- Add keyboard
     addKeyboard(sceneGroup)
@@ -352,16 +412,6 @@ function scene:create( event )
     myFidget.y = display.contentCenterY + 100;
 	myFidget.angularVelocity = 5500
  
-    -- Create the time bar.
-    local timeBar = widget.newProgressView(
-        {
-            x = display.contentCenterX,
-            y = 870,
-            width = 800,
-            isAnimated = true
-        }
-    )
-    timeBar:setProgress( 0.5 )
     -- Create the energy bar.
     energyBar = widget.newProgressView(
     {
@@ -371,22 +421,30 @@ function scene:create( event )
         isAnimated = true
     })
     energyBar:rotate(270)
-    local energyUpdateTimer = timer.performWithDelay(500, updateVel, 0)
+    energyUpdateTimer = timer.performWithDelay(500, updateVel, 0)
 
     -- Initialize answer key
     -- Initialize white board for ans key
-    local whiteBoard = display.newRect(display.contentCenterX, display.contentCenterY - 300, 400, 200)
-    whiteBoard:setFillColor(1,1,1)
-    sceneGroup:insert(whiteBoard)
     for i = 1, 10, 1 do
         ansKey[i] = display.newSprite(galphabetSheet, {name = theName, start = 1, count = 24})
         ansKey[i]:scale(.7,.7)
     end
     
+    -- Draw answer keys
     for i = 1, 5, 1 do
+        -- Background indicator of progress.
+        indicatorKey[i] = extras.getRedGreenSprite();
+        indicatorKey[i]:setSequence("red")
+        indicatorKey[i].x = (130*i) - 50;
+        indicatorKey[i].y = 220;
+        indicatorKey[i]:scale(.8,.8);
+        indicatorKey[i].isVisible = false;
+        -- The keys
         ansKey[i].isVisible = false;
         ansKey[i].x = (130 * i) - 50;
-        ansKey[i].y = 150;
+        ansKey[i].y = 220;
+        sceneGroup:insert(indicatorKey[i]);
+        indicatorKey[i]:toFront();
         sceneGroup:insert(ansKey[i]);
         ansKey[i]:toFront();
     end
@@ -401,6 +459,9 @@ function scene:create( event )
     tired[1] = display.newImage("arts/tiredOverlay.png");
     tired[2] = display.newImage("arts/tiredOverlay2.png");
     tired[3] = display.newImage("arts/tiredOverlay3.png")
+
+    sceneGroup:insert(timeSprite) -- Insert time sprite here to keep layered properly.
+
     for i = 1, 3, 1 do
         tired[i].x = display.contentCenterX;
         tired[i].y = display.contentCenterY;
@@ -408,9 +469,8 @@ function scene:create( event )
         tired[i]:toFront()
         tired[i].isVisible = false;
     end
-
-    sceneGroup:insert(timeBar)
     sceneGroup:insert(energyBar)
+    startGame(timeSprite);
 
 
 -- Initialize the scene here.

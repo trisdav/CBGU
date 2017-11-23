@@ -819,6 +819,40 @@ local function getFruitImages()
 	return cafeItemSheet;
 end
 
+--------------------------------------------------------------------------------
+		----------------------- Class things -----------------------
+--------------------------------------------------------------------------------
+local function getRedGreenSprite()
+	local options =
+			{
+				frames =
+					{
+						{	-- Red
+							x = 7,
+							y = 9,
+							width = 159,
+							height = 167
+						},
+						{ -- Green
+							x = 240,
+							y = 19,
+							width = 155,
+							height = 157
+						}
+					}
+			}
+	local rgImageSheet = graphics.newImageSheet("arts/squaresspritesheet.png", options);
+	local sequenceData = 
+			{
+				{name = "red", start = 1, count = 1 },
+				{name = "green", start = 2, count = 1}
+			}
+	local rgSprite = display.newSprite(rgImageSheet, sequenceData)
+	return rgSprite;
+end
+
+
+t.getRedGreenSprite = getRedGreenSprite;
 t.getBarFrames = getBarFrames;
 t.getBarSequence = getBarSequence;
 t.getFruitImages = getFruitImages;

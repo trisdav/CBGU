@@ -1,6 +1,7 @@
 -- Written by Tristan Davis
 -- Last edited 11/19/17
 -- Last edited 11/20/17
+-- Last edited 11/23/17
 
 local composer = require( "composer" )
 local physics = require("physics")
@@ -23,16 +24,7 @@ local back_button;
 local pointText;
 local params = {};
 params.cafeScore = 0;
--- All the foods
-local apple = "arts/apple.png"
-local cracker = "arts/cracker.png"
-local sandwich = "arts/sandwich.png"
-local candy = "arts/candy.png"
-local spider = "arts/spider.png"
-local spoon = "arts/spoon.png"
-local fly = "arts/fly.png"
-local grapes = "arts/grapes.png"
-local bean = "arts/bean.png"
+
 
 local function positiveObject(posObj)
 		points = points + 1;
@@ -163,14 +155,18 @@ local function gameOver(event)
 	timer.cancel(objectGenerator);
 	params.cafeScore = points;
 
-	local button = backButtons.newHscore("cafeteria", -- The name of the current scene
+	local button = backButtons.newHscore("Cafeteria", -- The name of the current scene
 											params) -- Parameters, e.g. params.cafeteriaScore
-	button.hscore.isVisible = true;
+	button.hscore.isVisible = false;
+	local function exitVis(event)
+		button.hscore.isVisible = true;
+	end
+	timer.performWithDelay(4800, exitVis)
 	-- TODO: Add a button to return to campus.
 end
 
 local function startGame(bar)
-	timer.performWithDelay(((1000 * 60)) -4000, gameOver); -- This game is timed.
+	timer.performWithDelay(((1000 * 60)) -5000, gameOver); -- This game is timed.
 	bar.timeScale = (1); -- Default time is 1 minute.
 	bar:play();
 	--transition.to(bar, {x = 65, xScale = 0, time = (1000 * 60) * 2, onComplete = timeOut})
@@ -189,12 +185,14 @@ end
 
 local function sword(event)
 	if(event.phase == "began") then
+		fork.isFocus = true;
 		fork.x = event.x;
 		fork.y = event.y;
 	    physics.addBody(fork, "kinematic", {isSensor = true})
 	    fork:addEventListener("collision", sliced)
 	elseif(event.phase == "ended") then
 		fork:removeEventListener("collision", sliced)
+		fork.isFocus = false;
 	elseif(event.phase == "moved") then
 		fork.x = event.x;
 		fork.y = event.y;
@@ -210,7 +208,7 @@ function scene:create( event )
 
     local sceneGroup = self.view
    		physics.start();
-   		--physics.setDrawMode("hybrid")
+   		physics.setDrawMode("hybrid")
    		local bg = display.newImage("arts/cafeteriaBG1.png", 360, 640)
 	    sceneGroup:insert(bg);
 	    -- Set up the clock
@@ -228,12 +226,13 @@ function scene:create( event )
 	   	bg:addEventListener("touch", sword);
 	   	fork = display.newCircle(0, 0,2);  -- This is the "sword"
 	   	bg:toBack();
-	   	startGame(timeSprite);
 		pointText = display.newText("Score: 0", display.contentCenterX, 40, native.systemFont, 45)
 		pointText:setFillColor(0,0,0)
 		sceneGroup:insert(fork)
 		sceneGroup:insert(pointText);
 		sceneGroup:insert(timeSprite);
+		startGame(timeSprite);
+
     -- Code here runs when the scene is first created but has not yet appeared on screen
 
 

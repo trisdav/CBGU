@@ -29,11 +29,7 @@ function fidget:new(o)
 
 			currentOmega = myImage.angularVelocity;
 			myImage.angularVelocity = 250 + currentOmega
-			myText.text = "angular velocity: " .. math.round(myImage.angularVelocity)
-			--myImage.angularVelocity = 1000
-			if(myTimer == nil) then
-				myTimer = timer.performWithDelay(500, function() myText.text = "angular velocity: " .. math.round(myImage.angularVelocity) end, 0)
-			end
+
 		end
 
 		local imageOutline = graphics.newOutline(2, "arts/educational_instrument.png")
