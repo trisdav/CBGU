@@ -82,6 +82,7 @@ end
 --event handler for cbg button
 local function cbgButtonEvent(event)
   print("Hello")
+  composer.gotoScene("CBG")
 end
 
 --event handler for dorm button
@@ -159,7 +160,7 @@ function scene:create( event )
     cafeteriaButton:rotate(90)
     cafeteriaButton:addEventListener("tap", cafeteriaButtonEvent)
 
-    local background = display.newImage("arts/Map.png", display.contentCenterX, display.contentCenterY)
+    local background = display.newImage("arts/blank.png", display.contentCenterX, display.contentCenterY)
 
     --storeButton = display.newRect( display.contentCenterX, display.contentCenterY +200, 100, 100 )
     --storeButton:setFillColor(1,.2,0)
