@@ -189,6 +189,8 @@ end
 
 local function sword(event)
 	if(event.phase == "began") then
+		fork.x = event.x;
+		fork.y = event.y;
 	    physics.addBody(fork, "kinematic", {isSensor = true})
 	    fork:addEventListener("collision", sliced)
 	elseif(event.phase == "ended") then
@@ -229,6 +231,7 @@ function scene:create( event )
 	   	startGame(timeSprite);
 		pointText = display.newText("Score: 0", display.contentCenterX, 40, native.systemFont, 45)
 		pointText:setFillColor(0,0,0)
+		sceneGroup:insert(fork)
 		sceneGroup:insert(pointText);
 		sceneGroup:insert(timeSprite);
     -- Code here runs when the scene is first created but has not yet appeared on screen
