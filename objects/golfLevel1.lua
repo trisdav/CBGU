@@ -50,7 +50,7 @@ local transOpt = {
 
 local function nextLevel()
 	transOpt.params.golfLevel = transOpt.params.golfLevel + 1;
-	transOpt.params.CBGScore = (win/strokeCount) + params.CBGScore;
+	transOpt.params.CBGScore = (strokeCount) + params.CBGScore;
 	--Remove scene objects
 	composer.removeScene("objects.golfLevel1")
 	if(isFinal) then
@@ -109,7 +109,9 @@ local function isMoving(event)
 		-- Set the putter to the new ball positon
 		putter.x = ball.x;
 		putter.y = ball.y;
-		putter.isVisible = true; -- Return the putter.
+		if(win  ~= 1) then
+			putter.isVisible = true; -- Return the putter.
+		end
 		strokeCount = strokeCount + 1;
 		if( win == 0) then
 			narrationText.text = "Putt!"
@@ -227,7 +229,7 @@ function scene:create( event )
 	bottomwall.density = 1; bottomwall.friction = 0.3; bottomwall.bounce = 0.2; 
 
 
-	local mainBG = display.newImageRect( "arts/golf-l1.png", 720, 1280 )
+	local mainBG = display.newImageRect( "arts/golf1bold.png", 720, 1280 )
 	mainBG.x = 360
 	mainBG.y = 640
 	physics.addBody( mainBG, "static", 

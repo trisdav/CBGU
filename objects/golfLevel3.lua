@@ -52,12 +52,12 @@ local transOpt = {
 
 local function nextLevel()
 	transOpt.params.golfLevel = transOpt.params.golfLevel + 1;
-	transOpt.params.CBGScore = (win/strokeCount) + params.CBGScore;
+	transOpt.params.CBGScore = (strokeCount) + params.CBGScore;
 	
 	--Remove scene objects
 	if(isFinal) then
 		--composer.removeScene(thisLevel)
-		params.CBGScore = math.round(transOpt.params.CBGScore);
+		params.CBGScore = 103 - math.round(transOpt.params.CBGScore);
 		local button = backButtons.newHscore(thisLevel, params);
 		button.isVisible = true;
 	elseif(transOpt.golfLevel > 3 ) then
@@ -116,7 +116,9 @@ local function isMoving(event)
 		-- Set the putter to the new ball positon
 		putter.x = ball.x;
 		putter.y = ball.y;
-		putter.isVisible = true; -- Return the putter.
+		if(win  ~= 1) then
+			putter.isVisible = true; -- Return the putter.
+		end
 		strokeCount = strokeCount + 1;
 		if( win == 0) then
 			narrationText.text = "Putt!"
@@ -202,48 +204,45 @@ function scene:create( event )
 	---------------------------
 	-- Shapes
 	---------------------------
-	local LeftBlock = { -357,-335, -112,-325, -117,-143, -358,-152 }
-	LeftBlock.density = 1; LeftBlock.friction = 0.3; LeftBlock.bounce = 0.2; 
-
-	local shape_3 = { -355,-338, -355,-440, -359,-440 }
-	shape_3.density = 1; shape_3.friction = 0.3; shape_3.bounce = 0.2; 
-
-	local RightBlock = { 355,-333, -41,-321, -53,-161, 357,-177 }
-	RightBlock.density = 1; RightBlock.friction = 0.3; RightBlock.bounce = 0.2; 
-
-	local shape_6 = { 354,-178, 352,636, 358,637 }
-	shape_6.density = 1; shape_6.friction = 0.3; shape_6.bounce = 0.2; 
-
-	local shape_7 = { -357,-442, -355,-639, -359,-640 }
-	shape_7.density = 1; shape_7.friction = 0.3; shape_7.bounce = 0.2; 
-
-	local Top = { -355,-635, -356,-639, 359,-636 }
-	Top.density = 1; Top.friction = 0.3; Top.bounce = 0.2; 
-
-	local shape_8 = { 355,-335, 352,-637, 357,-637 }
-	shape_8.density = 1; shape_8.friction = 0.3; shape_8.bounce = 0.2; 
-
-	local shape_9 = { -355,-152, -354,632, -358,634 }
-	shape_9.density = 1; shape_9.friction = 0.3; shape_9.bounce = 0.2; 
-
-	local Bottom = { -356,634, 352,631, 354,638 }
+	local Bottom = { 324,630, -317,627, -318,635 }
 	Bottom.density = 1; Bottom.friction = 0.3; Bottom.bounce = 0.2; 
 
+	local Left = { -312,626, -308,-163, -318,-167 }
+	Left.density = 1; Left.friction = 0.3; Left.bounce = 0.2; 
 
-	local mainBG = display.newImageRect( "arts/golf-l3.png", 720, 1280 )
+	local Leftmid = { -312,-163, -120,-146, -112,-324, -322,-335 }
+	Leftmid.density = 1; Leftmid.friction = 0.3; Leftmid.bounce = 0.2; 
+
+	local lefttop = { -314,-339, -310,-635, -355,-640 }
+	lefttop.density = 1; lefttop.friction = 0.3; lefttop.bounce = 0.2; 
+
+	local top = { -314,-636, 343,-634, 356,-640 }
+	top.density = 1; top.friction = 0.3; top.bounce = 0.2; 
+
+	local righttop = { 343,-636, 341,-335, 356,-332 }
+	righttop.density = 1; righttop.friction = 0.3; righttop.bounce = 0.2; 
+
+	local rightmid = { 342,-335, -42,-319, -52,-159, 125,-174, 216,-177, 275,-180, 344,-179 }
+	rightmid.density = 1; rightmid.friction = 0.3; rightmid.bounce = 0.2; 
+
+	local rightbottom = { 339,-182, 320,633, 336,633 }
+	rightbottom.density = 1; rightbottom.friction = 0.3; rightbottom.bounce = 0.2; 
+
+
+	local mainBG = display.newImageRect( "arts/golf3bold.png", 720, 1280 )
 	mainBG.x = 360
 	mainBG.y = 640
 	physics.addBody( mainBG, "static", 
-		{density=LeftBlock.density, friction=LeftBlock.friction, bounce=LeftBlock.bounce, shape=LeftBlock},
-		{density=shape_3.density, friction=shape_3.friction, bounce=shape_3.bounce, shape=shape_3},
-		{density=RightBlock.density, friction=RightBlock.friction, bounce=RightBlock.bounce, shape=RightBlock},
-		{density=shape_6.density, friction=shape_6.friction, bounce=shape_6.bounce, shape=shape_6},
-		{density=shape_7.density, friction=shape_7.friction, bounce=shape_7.bounce, shape=shape_7},
-		{density=Top.density, friction=Top.friction, bounce=Top.bounce, shape=Top},
-		{density=shape_8.density, friction=shape_8.friction, bounce=shape_8.bounce, shape=shape_8},
-		{density=shape_9.density, friction=shape_9.friction, bounce=shape_9.bounce, shape=shape_9},
-		{density=Bottom.density, friction=Bottom.friction, bounce=Bottom.bounce, shape=Bottom}
+	    {density=Bottom.density, friction=Bottom.friction, bounce=Bottom.bounce, shape=Bottom},
+	    {density=Left.density, friction=Left.friction, bounce=Left.bounce, shape=Left},
+	    {density=Leftmid.density, friction=Leftmid.friction, bounce=Leftmid.bounce, shape=Leftmid},
+	    {density=lefttop.density, friction=lefttop.friction, bounce=lefttop.bounce, shape=lefttop},
+	    {density=top.density, friction=top.friction, bounce=top.bounce, shape=top},
+	    {density=righttop.density, friction=righttop.friction, bounce=righttop.bounce, shape=righttop},
+	    {density=rightmid.density, friction=rightmid.friction, bounce=rightmid.bounce, shape=rightmid},
+	    {density=rightbottom.density, friction=rightbottom.friction, bounce=rightbottom.bounce, shape=rightbottom}
 	)
+
 
 	local movingBlock = display.newImageRect( "arts/blockLines.png", 300, 182 )
 	movingBlock.x = 150
