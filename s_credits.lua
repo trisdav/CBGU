@@ -48,22 +48,22 @@ local bo_menu = {
                       frames = {
                                 -- Frame 1, mouth open
                                  {
-                                    x = 167,
-                                    y = 4,
-                                    width = 627,
-                                    height = 410  
+                                    x = 0,
+                                    y = 0,
+                                    width = 584,
+                                    height = 360  
                                  },
                                 -- Frame 2, mouth closed
                                  {
-                                    x = 183,
-                                    y = 430,
-                                    width = 593,
-                                    height = 274
+                                    x = 0,
+                                    y = 371,
+                                    width = 584,
+                                    height = 285
                                  }
                                 }
                   }
 -- Fish sheet
-local fishSheet = graphics.newImageSheet("arts/fishSprite.png", fishOpts)
+local fishSheet = graphics.newImageSheet("arts/fishsprite.png", fishOpts)
 
 local fishSeq = {
                   { name = "open", start = 1, count = 1, time = 1},
@@ -98,7 +98,7 @@ function scene:create( event )
       local zachText = display.newText("Zach Parker", display.contentCenterX, display.contentCenterY + (64 * 2), display.contentWidth, display.contentHeight, native.systemFont, 64, "center") 
       local lostText = display.newText("Brian \"Lost\" Lofty", display.contentCenterX, display.contentCenterY + (64 * 3), display.contentWidth, display.contentHeight, native.systemFont, 64, "center") 
       local brandiText = display.newText("Brandi LeBaron", display.contentCenterX, display.contentCenterY + (64 * 4), display.contentWidth, display.contentHeight, native.systemFont, 64, "center") 
-      local bg = display.newImage("arts/cafeteriaBG1.png", 360, 640)
+      local bg = display.newImage("arts/blank.png", 360, 640)
       fishSprite = display.newSprite(fishSheet, fishSeq);
       fishSprite:setSequence("closed")
       --fishSprite:scale(.5,.5)
@@ -106,6 +106,7 @@ function scene:create( event )
       fishSprite.y = display.contentCenterY;
       fishSprite:addEventListener("tap", AAAAAAAH);
       --myText.align = "center";
+      developedText:setFillColor(.1,.1,.5)
       myText:setFillColor(0,0,0)
       zachText:setFillColor(0,0,0)
       lostText:setFillColor(0,0,0)
