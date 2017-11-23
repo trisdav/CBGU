@@ -41,59 +41,46 @@ end
    local b_exit;
    --Button Options
    local bo_exit;
-   local bo_start = { left = xCenter - 200, --center = width/2
-                     top = yCenter - 450,
+   local bo_start = { left = xCenter - 150, --center = width/2
+                     top = yCenter - 260,
                      id = "Start",
-                     label = "Start",
+                     label = "",
                      onEvent = Start,
                      shape = "roundedRect",
-                     width = 400,
-                     height = 160,
+                     width = 300,
+                     height = 100,
                      cornerRadius = 30,
-                     fillColor = {default = {1,0,0,1}, over = {1,0.1,0.7,0.4}},
-                     strokeColor = {default = {1,0.4,0,1}, over = {0.8,0.8,1,1}},
+                     fillColor = {default = {0,0,0,.05}, over = {0,0,0,0.14}},
+                     strokeColor = {default = {0,0,0,0}, over = {0,0,0,0}},
                      strokeWidth = 10
                   }
-   local bo_settings = {
-                     left = xCenter - 200, --center = width/2
-                     top = yCenter - 250, --Offset buttons relative to first button.
-                     id = "Settings",
-                     label = "Settings",
-                     onEvent = Settings,
-                     shape = "roundedRect",
-                     width = 400,
-                     height = 160,
-                     cornerRadius = 30,
-                     fillColor = {default = {1,0,0,1}, over = {1,0.1,0.7,0.4}},
-                     strokeColor = {default = {1,0.4,0,1}, over = {0.8,0.8,1,1}},
-                     strokeWidth = 10
-                  }
+
    local bo_credits = {
-                     left = xCenter - 200, --center = width/2
-                     top = yCenter - 50, --Offset buttons relative to first button.
+                     left = xCenter - 150, --center = width/2
+                     top = yCenter - 110, --Offset buttons relative to first button.
                      id = "Credits",
-                     label = "Credits",
+                     label = "",
                      onEvent = Credits,
                      shape = "roundedRect",
-                     width = 400,
-                     height = 160,
+                     width = 290,
+                     height = 100,
                      cornerRadius = 30,
-                     fillColor = {default = {1,0,0,1}, over = {1,0.1,0.7,0.4}},
-                     strokeColor = {default = {1,0.4,0,1}, over = {0.8,0.8,1,1}},
+                     fillColor = {default = {0,0,0,.05}, over = {0,0,0,0.14}},
+                     strokeColor = {default = {0,0,0,0}, over = {0,0,0,0}},
                      strokeWidth = 10
                   }
    local bo_exit = {
-                     left = xCenter - 200, --center = width/2
-                     top = yCenter + 150, --Offset button relative to first button.
+                     left = xCenter - 150, --center = width/2
+                     top = yCenter + 45, --Offset button relative to first button.
                      id = "Exit",
-                     label = "Exit",
+                     label = "",
                      onEvent = quitGame,
                      shape = "roundedRect",
-                     width = 400,
-                     height = 160,
+                     width = 300,
+                     height = 100,
                      cornerRadius = 30,
-                     fillColor = {default = {1,0,0,1}, over = {1,0.1,0.7,0.4}},
-                     strokeColor = {default = {1,0.4,0,1}, over = {0.8,0.8,1,1}},
+                     fillColor = {default = {0,0,0,.05}, over = {0,0,0,0.14}},
+                     strokeColor = {default = {0,0,0,0}, over = {0,0,0,0}},
                      strokeWidth = 10
                   }
 ---------------------------------------------------------------------------------
@@ -102,6 +89,10 @@ end
 function scene:create( event )
  display.setStatusBar( display.HiddenStatusBar )
    local sceneGroup = self.view
+   local background = display.newImage("arts/menuScreen.png", 0 , 0);
+   background.x = 360;
+   background.y = 640;
+   sceneGroup:insert(background);
    -- Initialize the scene here.
    -- Example: add display objects to "sceneGroup", add touch listeners, etc.
 end
@@ -116,14 +107,12 @@ function scene:show( event )
       --Initialize buttons.
       b_start    = w_button.newButton(bo_start)
       b_start._view._label.size = 64
-      b_settings = w_button.newButton(bo_settings)
-      b_settings._view._label.size = 64
+
       b_credits  = w_button.newButton(bo_credits)
       b_credits._view._label.size = 64
       b_exit     = w_button.newButton(bo_exit)
       b_exit._view._label.size = 64
       sceneGroup:insert(b_start)
-      sceneGroup:insert(b_settings)
       sceneGroup:insert(b_credits)
       sceneGroup:insert(b_exit)
       if(event.params ~= nil) then

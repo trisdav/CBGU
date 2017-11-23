@@ -208,7 +208,7 @@ function scene:create( event )
 
     local sceneGroup = self.view
    		physics.start();
-   		physics.setDrawMode("hybrid")
+   		--physics.setDrawMode("hybrid")
    		local bg = display.newImage("arts/cafeteriaBG1.png", 360, 640)
 	    sceneGroup:insert(bg);
 	    -- Set up the clock
