@@ -8,9 +8,8 @@ local physics = require("physics")
 local backButtons = require("objects.menu_button")
 local extras = require("objects.extras")
 local graphics = require("graphics")
-
+local audio = require("audio")
 local scene = composer.newScene()
-
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
@@ -23,16 +22,37 @@ local points = 0; -- A sum of possitive and negative objects.
 local back_button;
 local pointText;
 local params = {};
+local crunch = audio.loadSound("arts/272231_220835-lq.mp3");
+local clang  = audio.loadSound("arts/clang.wav");
+local bleh  = audio.loadSound("arts/bleh.wav");
+
 params.cafeScore = 0;
 
 
 local function positiveObject(posObj)
+		local audioHandle = audio.play(crunch)
+		audio.seek(15500, audioHandle);
+		local function stopCrunch(event)
+			audio.stop(audioHandle)
+		end
+		timer.performWithDelay(1000, stopCrunch)
 		points = points + 1;
 		display.remove(posObj);
 		pointText.text = "Score: " .. points;
 end
 
 local function negativeObject(negObj)
+		if(negObj.isSpoon ~= nil) then
+			audio.play(clang)
+		else
+			local audioHandle = audio.play(crunch)
+			audio.seek(15500, audioHandle);
+			local function stopCrunch(event)
+				audio.stop(audioHandle)
+			end
+			audio.play(bleh)
+			timer.performWithDelay(1000, stopCrunch)
+		end
 		points = points - 1;
 		display.remove(negObj);
 		pointText.text = "Score: " .. points;
@@ -95,6 +115,7 @@ local SpiderTopLeftShape = { -11.8571529388428,-14.5714254379272, -11.1428670883
 			theObject.y = display.contentHeight + 100;
 			--theObject:addEventListener("touch", negativeObject)
 			theObject.id = "-"
+			theObject.isSpoon = true;
 			physics.addBody(theObject, "dynamic", {isSensor = true, outline = anOutline})
 		elseif(o == 6) then -- Fly
 			theObject = display.newImage(objectSpriteSheet, 6);

@@ -410,6 +410,13 @@ function scene:create( event )
     timeSprite.y = 111;
     timeSprite:scale(1.164,1.5)
 
+    -- add whiteboard
+    local board = display.newImage("arts/whiteboard.png")
+    board.x = display.contentCenterX - 50;
+    board.y = display.contentCenterY - 250;
+    board:scale(1.4,1.4)
+    sceneGroup:insert(board);
+
     -- Add teacher
     --local head;
     --local body;
@@ -427,9 +434,17 @@ function scene:create( event )
     teacher:insert(teacher.head);
     teacher:insert(teacher.body);
     teacher:insert(teacher.arm);
-    teacher.x = display.contentCenterX + 200;
-    teacher.y = display.contentCenterY;
+    teacher.x = display.contentCenterX + 250;
+    teacher.y = display.contentCenterY - 150;
+    teacher:scale(.5,.5)
     sceneGroup:insert(teacher);
+
+    -- Add students
+    local students = display.newImage("arts/students.png");
+    students.x = display.contentCenterX;
+    students.y = display.contentCenterY;
+    students:scale(1.4,1.4)
+    sceneGroup:insert(students);
     -- Add fidget spinner
     physics.setGravity(0,0)
     local myOptions = {

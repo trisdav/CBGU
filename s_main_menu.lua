@@ -50,7 +50,7 @@ end
                      width = 300,
                      height = 100,
                      cornerRadius = 30,
-                     fillColor = {default = {0,0,0,.05}, over = {0,0,0,0.14}},
+                     fillColor = {default = {0,0,0,.05}, over = {0,0,0,0.2}},
                      strokeColor = {default = {0,0,0,0}, over = {0,0,0,0}},
                      strokeWidth = 10
                   }
@@ -65,7 +65,7 @@ end
                      width = 290,
                      height = 100,
                      cornerRadius = 30,
-                     fillColor = {default = {0,0,0,.05}, over = {0,0,0,0.14}},
+                     fillColor = {default = {0,0,0,.05}, over = {0,0,0,0.2}},
                      strokeColor = {default = {0,0,0,0}, over = {0,0,0,0}},
                      strokeWidth = 10
                   }
