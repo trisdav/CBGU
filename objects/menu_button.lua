@@ -11,21 +11,17 @@
 		sceneGroup:insert(button.hscore); -- Be sure to insert into scene group
 		button.hscore.isVisible = false; -- Keep hidden until needed.
 		
-		
-	-- For going back to campus or menu.
-		local backButtons = require("objects.menu_button") -- Include this lua file
-		--Button that returns to campus map
-		button = backButtons.newCampus("Cafeteria"); -- substitute your scene name for "Cafeteria"
-		--or button that returns to main menu
-		button = backButtons.newMenu("Cafeteria");
+		-- For going back to campus
+      local backButtons = require("objects.menu_button") -- Include this lua file
+      button = backButtons.newCampus("Cafeteria"); -- substitute your scene name for "Cafeteria"
+      sceneGroup:insert(button.campus); -- Be sure to add it to scene group.
+      button.campus.isVisible = false; -- Make sure it is not visible until it is needed.
 
-		--For campus button
-		sceneGroup:insert(button.campus); -- Be sure to add it to scene group.
-		-- For menu button
+
+	-- For going back to menu.
+      local backButtons = require("objects.menu_button") -- Include this lua file
+		button = backButtons.newMenu("Cafeteria");
 		sceneGroup:insert(button.menu);
-		--For campus button
-		button.campus.isVisible = false; -- Make sure it is not visible until it is needed.
-		-- For menu button
 		button.menu.isVisible = false;
 
 ]]

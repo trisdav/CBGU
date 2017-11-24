@@ -19,6 +19,8 @@ local scene = composer.newScene()
 local physics = require("physics")
 local backButtons = require("objects.menu_button")
 local extras = require("objects.extras")
+local audio = require("audio")
+local blahblahblah = audio.loadSound("arts/165539_1038806-lq.mp3")
 --	composer.removeScene("Class")
 
 --------------------------------------------------------------------------
@@ -210,6 +212,10 @@ local galphabetSheet = graphics.newImageSheet("arts/galphabet.png", galphabetShe
 local ansKey = {}; -- These are the sprites of the answer keys.
 local indicatorKey = {}; -- These are used to indicate progress.
 local energyUpdateTimer;
+local blah = 1; -- The teacher chatter will be channel 1.
+local whir = 2; -- The fidget chatter will be channel 2.
+local taps = 3; -- The keyboard chatter will be channel 3.
+local teacher = display.newGroup(); -- Teacher sprite.
 
 
 --------------- Velocity bar -------------------
@@ -238,13 +244,24 @@ local function updateVel(event)
             end
 end
 
------------ Energy bar stuff ----------
-
+-- Teacher arm animation.
+local function swingArm(event)
+    transition.to(teacher.arm, {time = 500, rotation = 60});
+    transition.to(teacher.arm, {time = 500, delay = 500, rotation = 10});
+end
+local function firstSwing()
+    transition.to(teacher.arm, {time = 500, rotation = 60});
+    transition.to(teacher.arm, {time = 500, delay = 500, rotation = 10});
+    timer.performWithDelay(1000, swingArm, 60);
+end
 -------------- Match character functions ----------
 local currKey;
 local boardKeys = {};
 local active = true
 local function genKeys(event)
+    teacher.head:play();
+    firstSwing();
+    audio.play(blahblahblah, {channel = blah, loops = 1 })
     for i = 1, numKeys, 1 do
         boardKeys[i] = math.random(1,24);
     end
@@ -272,6 +289,8 @@ local function checkKey(event)
                         indicatorKey[i].isVisible = false;
                         indicatorKey[i]:setSequence("red")
                     end
+                    teacher.head:pause();
+                    audio.stop(blah);
                     timer.performWithDelay(2000, genKeys);
                 end
             end
@@ -391,6 +410,26 @@ function scene:create( event )
     timeSprite.y = 111;
     timeSprite:scale(1.164,1.5)
 
+    -- Add teacher
+    --local head;
+    --local body;
+    --local arm;
+    teacher.head, teacher.body, teacher.arm = extras.getTeacherSprite();
+    -- Head manipulations.
+    teacher.head.xScale = -1;
+    teacher.head.anchorY = 1; 
+    teacher.head.y = -208;
+    teacher.head.x = 20;
+    -- Arm manipulations.
+    teacher.arm.x = 20;
+    teacher.arm.y = -125;
+    teacher.arm.anchorX = 1;
+    teacher:insert(teacher.head);
+    teacher:insert(teacher.body);
+    teacher:insert(teacher.arm);
+    teacher.x = display.contentCenterX + 200;
+    teacher.y = display.contentCenterY;
+    sceneGroup:insert(teacher);
     -- Add fidget spinner
     physics.setGravity(0,0)
     local myOptions = {
@@ -472,7 +511,8 @@ function scene:create( event )
     sceneGroup:insert(energyBar)
     startGame(timeSprite);
 
-
+    -- audio things
+    audio.setVolume(.1, {channel = blah})
 -- Initialize the scene here.
 end
 -- "scene:show()"

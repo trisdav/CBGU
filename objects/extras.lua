@@ -851,7 +851,55 @@ local function getRedGreenSprite()
 	return rgSprite;
 end
 
+local function getTeacherSprite()
+	local options = 
+			{
+				frames = 
+					{
+						{ -- Closed
+							x = 54,
+							y = 83,
+							width = 154,
+							height = 158,
+						},
+						{ -- open 1
+							x = 283,
+							y = 65,
+							width = 154,
+							height = 158
+						},
+						{ -- open 2
+							x = 524,
+							y = 67,
+							width = 154,
+							height = 158
+						},
+						{ -- Body
+							x = 602,
+							y = 362,
+							width = 188,
+							height = 424
+						},
+						{ -- arm
+							x = 141,
+							y = 696,
+							width = 208,
+							height = 26
+						}
+				}
+			}; -- end options
 
+	local headSequence = { name = "blah blah blah", frames = {1, 2, 3, 2, 1}, time = 400 }
+	local teacherSheet = graphics.newImageSheet("arts/teacherSpriteSheet.png", options);
+	local headSprite = display.newSprite(teacherSheet, headSequence)
+	local bodySprite = display.newImage(teacherSheet, 4);
+	local armSprite = display.newImage(teacherSheet, 5);
+
+	-- 1 - 3 is mouth, 4 is body, 5 is arm.
+	return headSprite, bodySprite, armSprite;
+end
+
+t.getTeacherSprite = getTeacherSprite;
 t.getRedGreenSprite = getRedGreenSprite;
 t.getBarFrames = getBarFrames;
 t.getBarSequence = getBarSequence;

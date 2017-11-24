@@ -10,8 +10,11 @@
 
 
 local composer = require( "composer" )
+local audio = require("audio")
 
 local scene = composer.newScene()
+local bounceSound = audio.loadSound("arts/365789_5966424-lq.mp3");
+local puttSound = audio.loadSound("arts/366597_6736410-lq.mp3");
 
 -- -----------------------------------------------------------------------------------
 -- Code outside of the scene event functions below will only be executed ONCE unless
@@ -139,6 +142,15 @@ local function putterEvent(event)
 		putterLine:setStrokeColor(0,0,1)
 	end
 	if(event.phase == "ended") then
+		--- Audio
+		local handle = audio.play(puttSound, {fadein = 0, delay = 0});
+		audio.seek(1550, handle);
+
+		local function stop(event)
+			audio.stop(handle);
+		end
+		timer.performWithDelay(500, stop, 1);
+		-- physics
 		putter.isVisible = false; -- Temporarily remove putter.
 		-- Get change in x and y
 		local deltaX = event.x - ball.x;
@@ -148,6 +160,7 @@ local function putterEvent(event)
 		display.remove(putterLine)
 		-- while ball is in motion check to see if it is still in motion
 		checkTimer = timer.performWithDelay(50, isMoving, 0) 
+
 	end
 end
 
@@ -155,12 +168,20 @@ end
 local function inTheHole(event)
 
 	if(event.other == ball) then
+		-- audio
+		local handle = audio.play(puttSound, {fadein = 0, delay = 0 });
+		audio.seek(2000, handle);
+		local function stop(event)
+			audio.stop(handle);
+		end
+		timer.performWithDelay(500, stop, 1);
+		-- physics
 		ball:setLinearVelocity(0,0);
 		ball.angularVelocity = 0;
 		transition.to(event.other, {time = 150, x = hole.x, y = hole.y})
 		narrationText.text = "Hole in: ".. strokeCount;
 		win = 1;
-		--print("Here")
+		--print("Here")=
 		timer.performWithDelay(2000, nextLevel)
 	end
 end
@@ -180,7 +201,13 @@ local function sandPit(event)
 
 end
 
-
+--- Wall collision ---
+local function wallColl(event)
+	if(event.phase == "began") then
+		local handle = audio.play(bounceSound, {fadein = 0, delay = 0});
+		audio.seek(725, handle);
+	end
+end
 
 -- create()
 function scene:create( event )
@@ -252,6 +279,7 @@ function scene:create( event )
 -------------------------------------------------------------------------
 
 	background = mainBG; -- For sake of the generated code.
+	background:addEventListener("collision", wallColl);
 	hole = holeGumbo;
 
 	setBall(360,1200); -- Set the position of the ball.
