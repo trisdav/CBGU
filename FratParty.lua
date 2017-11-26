@@ -2,6 +2,7 @@ local composer = require( "composer" )
 local widget = require("widget")
 local physics = require("physics")
 local menuButton = require("objects.menu_button")
+local backButtons = require("objects.menu_button")
 
 local scene = composer.newScene()
 
@@ -9,25 +10,27 @@ local scene = composer.newScene()
 -- Code outside of the scene event functions below will only be executed ONCE unless
 -- the scene is removed entirely (not recycled) via "composer.removeScene()"
 -- -----------------------------------------------------------------------------------
-local options = {
-  effect = "fade",
-  time = 1000,
-  params = {
-    LibraryScore = score,
-    classScore = nil,
-    dormScore = nil,
-    CBGScore = nil,
-    GymScore = nil
-           }
-}
+
+ local params = {}
+local score = 0
 local glug = audio.loadStream("arts/glug.wav")
 local gasp = audio.loadStream("arts/gasp.wav")
-local function gameOver()
-  options.params.FratScore = score
-  composer.gotoScene("Highscores", options)
-  composer.removeScene("FratParty")
+local function gameOver(event)
+    b_left:removeSelf()
+    b_right:removeSelf()
+    -- Game over things.
+     params.FratScore = score
+
+    local button = backButtons.newHscore("FratParty", -- The name of the current scene
+                                            params) -- Parameters, e.g. params.cafeteriaScore
+    button.hscore.isVisible = false;
+    local function exitVis(event)
+        button.hscore.isVisible = true;
+    end
+    timer.performWithDelay(100, exitVis)
+    -- TODO: Add a button to return to campus.
 end
-local score = 0
+
 local xCenter =display.contentCenterX
 local yCenter =display.contentCenterY
 local function drink()
