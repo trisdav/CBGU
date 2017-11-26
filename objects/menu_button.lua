@@ -1,6 +1,7 @@
 -- Written by Tristan Davis
 -- Last edited 11/19/17
 -- Last edited 11/20/17
+-- Last edited 11/26/17
 
 --[[
 	--Usage:
@@ -78,7 +79,7 @@ function t.newCampus(oldScene)
       if(event.phase == "ended") then
          event.target.isVisible = false;
          composer.removeScene(oldScene);
-         composer.gotoScene("s_main_menu", transition)
+         composer.gotoScene("Campus", transition)
       end
    end
 
@@ -87,8 +88,8 @@ function t.newCampus(oldScene)
    local bo_campus = {
                   left = display.contentCenterX - 200, --center = width/2
                   top = display.contentCenterY + 400,
-                  id = "Menu",
-                  label = "Menu",
+                  id = "Campus",
+                  label = "Campus",
                   onEvent = campusFunc,
                   shape = "roundedRect",
                   width = 400,
