@@ -375,6 +375,8 @@ end
 local function gameOver()
     active = false;
     timer.cancel(energyUpdateTimer)
+    audio.stop(blah);
+    teacher.head:pause();
     myFidget:removeEventListener("tap", spin)
     physics.stop();
     local params = {};
