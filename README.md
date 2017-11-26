@@ -14,3 +14,9 @@ https://freesound.org/data/previews/165/165539_1038806-lq.mp3
 
 Cafeteria sounds
 https://freesound.org/data/previews/272/272231_220835-lq.mp3
+
+Gym sounds
+https://freesound.org/people/zmobie/sounds/319760/
+
+Dorm sounds
+http://soundbible.com/1634-Snoring.html
