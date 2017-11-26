@@ -22,6 +22,8 @@ local isGameOver = false
 local goals = 0
 local isPhaseSkipped = true
 
+local bounceSound = audio.loadStream( "arts/basketballBounce.wav" )
+
 local options = {
   effect = "fade",
   time = 1000,
@@ -139,6 +141,13 @@ local function goalCollision(event)
   end
 end
 
+--plays a sound when it collides with objects
+local function collision(event)
+  if event.phase == "began" then
+    audio.play(bounceSound, {})
+  end
+end
+
 --ends the minigame
 local function gameOver()
   isGameOver = true;
@@ -186,7 +195,7 @@ function scene:create( event )
     -- Code here runs when the scene is first created but has not yet appeared on screen
     physics.start()
     physics.setGravity( 0, 18 )
-    physics.setDrawMode( "hybrid" )
+    --physics.setDrawMode( "hybrid" )
     Runtime:addEventListener("enterFrame", trackVelocity)
     --set background image
     background  = display.newImage("arts/courtBackground.png")
@@ -197,18 +206,22 @@ function scene:create( event )
     --creates the backboard
     backboard = display.newRect(714, 320, 20, 300)
     backboard:setFillColor(0, 153/255, 51/255)
+    backboard:addEventListener("collision", collision)
     physics.addBody( backboard, "static")
 
     --creates the front of the rim
     rimFront = display.newRoundedRect( 510, 400, 10, 10, 10)
     rimFront:setFillColor(1, (130/255), 0)
+    rimFront:addEventListener("collision", collision)
     physics.addBody(rimFront, "static")
 
     --creates the back of the rim
     rimBack1 = display.newRect( 690, 419, 30, 50)
     rimBack1:setFillColor(1, (130/255), 0)
+    rimBack1:addEventListener("collision", collision)
     rimBack2 = display.newRect(675, 400, 55, 10)
     rimBack2:setFillColor(1, (130/255), 0)
+    rimBack2:addEventListener("collision", collision)
     physics.addBody(rimBack1, "static")
     physics.addBody(rimBack2, "static")
 
@@ -236,6 +249,7 @@ function scene:create( event )
     courtBottom = display.newRect( display.contentCenterX, 1235, display.contentWidth, 89)
     courtBottom:setFillColor((245/255),(211/255),(139/255))
     courtBottom:addEventListener("collision", ballFloorCollision)
+    courtBottom:addEventListener("collision", collision)
     physics.addBody(courtBottom, "static")
 
     --creates a wall to the right so the ball doesn't go off screen
