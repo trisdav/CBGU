@@ -386,6 +386,7 @@ function scene:destroy( event )
 	for i = 1, 4, 1 do -- 4 is the current body count.
 		display.remove(miscBodies[i]);
 	end
+	physics.stop();
     -- Code here runs prior to the removal of scene's view
 
 end
