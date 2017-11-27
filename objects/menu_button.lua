@@ -133,7 +133,7 @@ function t.newHscore(oldScene, oldParams)
       elseif(oldParams.classScore ~= nil) then
          transition.params.classScore = oldParams.classScore;
       elseif(oldParams.libraryScore ~= nil) then
-         transition.params.libraryScore = oldParams.classScore;
+         transition.params.libraryScore = oldParams.libraryScore;
       elseif(oldParams.partyScore ~= nil) then
          transition.params.partyScore = oldParams.partyScore;
       end
