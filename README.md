@@ -1,4 +1,26 @@
 # CBGU
+Tristan Davis
+	Cafeteria
+	CBG
+	Class
+	Menu/Credits
+Zach Parker
+	Gym
+	Campus
+	Dorm
+Brian Lofty
+	FratParty
+	Library
+Brandi LeBaron
+	Art work for
+		Cafeteria
+		CBG
+		Class
+		Menu
+		Campus
+		Library
+		FratParty
+
 
 
 Assets not created by team:

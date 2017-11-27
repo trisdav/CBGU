@@ -132,7 +132,11 @@ function t.newHscore(oldScene, oldParams)
 			transition.params.cafeScore = oldParams.cafeScore;
       elseif(oldParams.classScore ~= nil) then
          transition.params.classScore = oldParams.classScore;
-		end
+      elseif(oldParams.libraryScore ~= nil) then
+         transition.params.libraryScore = oldParams.libraryScore;
+      elseif(oldParams.partyScore ~= nil) then
+         transition.params.partyScore = oldParams.partyScore;
+      end
 		 
          composer.removeScene(oldScene);
          composer.gotoScene("Highscores", transition)

@@ -1,5 +1,6 @@
 local composer = require( "composer" )
 local menuButton = require("objects.menu_button")
+local backButtons = require("objects.menu_button")
 local widget = require("widget")
 local scene = composer.newScene()
 
@@ -14,27 +15,9 @@ local scene = composer.newScene()
 	local score = 0
 	local flipsound = audio.loadStream("arts/pageFlip.wav")
 	local studySound = audio.loadStream("arts/study.wav")
+    local params = {}
 
-	local options = {
-  effect = "fade",
-  time = 1000,
-  params = {
-    LibraryScore = score,
-    classScore = nil,
-    dormScore = nil,
-    CBGScore = nil,
-    GymScore = nil
-           }
-}
-
-	local function gameOver()
-		pageGroup:removeSelf()
-		pages =nil
-		pageGroup=nil
-  options.params.LibraryScore = score
-   composer.gotoScene("Highscores", options)
-   composer.removeScene("Library")
-end
+	
 	local function study(event)
 		event.target:removeSelf()
 		audio.play(studySound)
@@ -90,13 +73,29 @@ end
 		 end
 		end
 	end
+	local function gameOver()
+		pageGroup:removeSelf()
+		pages =nil
+		pageGroup=nil
+  		params.libraryScore = score
+  		book:removeEventListener("touch", flipPage)
+
+    local button = backButtons.newHscore("Library", -- The name of the current scene
+                                            params) -- Parameters, e.g. params.cafeteriaScore
+    button.hscore.isVisible = false;
+    local function exitVis(event)
+        button.hscore.isVisible = true;
+    end
+    timer.performWithDelay(100, exitVis)
+    -- TODO: Add a button to return to campus.
+end
 
 
 local function startGame(event)
   if(event.phase == "ended") then
     display.remove(b_start)
-    timer.performWithDelay((1000 * 60) * 1, gameOver); -- This game is timed. 1 minute
-    transition.to(timeBar, {x = 65, xScale = 0, time = (1000 * 60) * 1})
+    timer.performWithDelay((1000 * 30) * 1, gameOver); -- This game is timed. 1 minute
+    transition.to(timeBar, {x = 65, xScale = 0, time = (1000 * 30) * 1})
     book:addEventListener("touch", flipPage)
 
   end
