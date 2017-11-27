@@ -12,15 +12,14 @@ local scene = composer.newScene()
 -- -----------------------------------------------------------------------------------
 
  local params = {}
-local score = 0
+local score = 1
 local glug = audio.loadStream("arts/glug.wav")
 local gasp = audio.loadStream("arts/gasp.wav")
 local function gameOver(event)
     b_left:removeSelf()
     b_right:removeSelf()
     -- Game over things.
-     params.FratScore = score
-
+     params.partyScore = score
     local button = backButtons.newHscore("FratParty", -- The name of the current scene
                                             params) -- Parameters, e.g. params.cafeteriaScore
     button.hscore.isVisible = false;
@@ -36,7 +35,7 @@ local yCenter =display.contentCenterY
 local function drink()
     score = score+1
     goalText.text = "Inebriation: " .. score
-    print(pivotJoint.jointAngle)
+    --print(pivotJoint.jointAngle)
     audio.play(glug)
     t = timer.performWithDelay(1000,drink,1)
     if(pivotJoint.jointAngle >30 or pivotJoint.jointAngle < -30) then

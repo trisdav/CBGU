@@ -77,7 +77,7 @@ local scene = composer.newScene()
 		pageGroup:removeSelf()
 		pages =nil
 		pageGroup=nil
-  		params.LibraryScore = score
+  		params.libraryScore = score
   		book:removeEventListener("touch", flipPage)
 
     local button = backButtons.newHscore("Library", -- The name of the current scene
