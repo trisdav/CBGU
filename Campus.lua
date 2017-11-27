@@ -210,7 +210,26 @@ end
 
 --event handler for party button
 local function partyButtonEvent(event)
-  print("Hello")
+  if (hour >= 22 and hour > 4) or (hour < 22 and hour < 4) then
+    updateTime(7)
+    hunger = hunger - 35
+    if hunger <= 0 then
+      hunger = 0
+      health = health - 1
+      checkHealth()
+    end
+    hungerText.text = "Hunger: "..hunger
+    energy = energy - 40
+    if energy <= 0 then
+      energy = 0
+      health = health - 1
+      checkHealth()
+    end
+    composer.gotoScene("FratParty")
+  else
+    errorText.text = "Only available between 22:00 and 4:00"
+    local t = timer.performWithDelay( 1500, removeErrorText)
+  end
 end
 
 --event handler for cbg button
@@ -416,7 +435,10 @@ function scene:show( event )
           currentData.libraryScore = nil
           writeCurrentData()
         elseif currentData.partyScore ~= nil then
-
+          IQ = IQ - currentData.partyScore
+          IQText.text = "IQ: "..IQ
+          currentData.partyScore = nil
+          writeCurrentData()
         end
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
