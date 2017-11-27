@@ -277,7 +277,7 @@ end
 local function checkKey(event)
     if(active == true) then
         if(event.phase == "ended") then
-            print(event.target.id .. " == " .. boardKeys[currKey])
+            --print(event.target.id .. " == " .. boardKeys[currKey])
             if(event.target.id == boardKeys[currKey]) then
                 indicatorKey[currKey]:setSequence("green"); -- Green
                 currKey = currKey + 1;
