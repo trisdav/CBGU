@@ -1,25 +1,25 @@
 # CBGU
 Tristan Davis
-	Cafeteria
-	CBG
-	Class
-	Menu/Credits
+	Cafeteria,
+	CBG,
+	Class,
+	Menu/Credits.
 Zach Parker
-	Gym
-	Campus
-	Dorm
+	Gym,
+	Campus,
+	Dorm.
 Brian Lofty
-	FratParty
-	Library
+	FratParty,
+	Library.
 Brandi LeBaron
-	Art work for
-		Cafeteria
-		CBG
-		Class
-		Menu
-		Campus
-		Library
-		FratParty
+	Art work for:
+		Cafeteria,
+		CBG,
+		Class,
+		Menu,
+		Campus,
+		Library,
+		FratParty.
 
 
 
