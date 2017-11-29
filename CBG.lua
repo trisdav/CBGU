@@ -17,7 +17,6 @@ local scene = composer.newScene()
 -- create()
 function scene:create( event )
     local sceneGroup = self.view
-	composer.gotoScene("objects.golfLevel1", transition )
     --sceneGroup:insert(golfObjects.walls)
     -- Code here runs when the scene is first created but has not yet appeared on screen
 
@@ -32,6 +31,7 @@ function scene:show( event )
 
     if ( phase == "will" ) then
         -- Code here runs when the scene is still off screen (but is about to come on screen)
+        composer.gotoScene("objects.golfLevel1", transition )
 
     elseif ( phase == "did" ) then
         -- Code here runs when the scene is entirely on screen
